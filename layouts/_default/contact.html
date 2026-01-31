@@ -90,11 +90,19 @@
           </div>
           <button type="submit" class="btn btn-primary" id="submitBtn">Send Message</button>
         </form>
+        <div class="form-success" id="formSuccess" style="display:none;">
+          <div class="success-icon">✓</div>
+          <h3>Message Sent!</h3>
+          <p>Thanks for reaching out. We'll get back to you shortly.</p>
+          <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
       </div>
 
       <script>
       (function() {
         const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successDiv = document.getElementById('formSuccess');
         const freeEmailDomains = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com',
           'mail.com','protonmail.com','icloud.com','yandex.com','zoho.com','gmx.com',
           'live.com','msn.com','inbox.com','me.com','mac.com','fastmail.com','tutanota.com'];
@@ -119,9 +127,10 @@
         });
 
         form.addEventListener('submit', function(e) {
+          e.preventDefault();
           let valid = true;
 
-          // Name: at least 2 chars, looks like a real name (has a space for first+last)
+          // Name: at least 2 chars
           const name = document.getElementById('name').value.trim();
           if (name.length < 2) {
             showError('name', 'Please enter your full name.'); valid = false;
@@ -135,7 +144,7 @@
           if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             showError('email', 'Please enter a valid email address.'); valid = false;
           } else if (freeEmailDomains.indexOf(emailDomain) !== -1) {
-            showError('email', 'Please use your work email address.');  valid = false;
+            showError('email', 'Please use your work email address.'); valid = false;
           } else { clearError('email'); }
 
           // Company: at least 2 chars, not just numbers/symbols
@@ -152,7 +161,30 @@
             showError('message', 'Please provide at least a few sentences so we can help effectively.'); valid = false;
           } else { clearError('message'); }
 
-          if (!valid) { e.preventDefault(); }
+          if (!valid) return;
+
+          // AJAX submit
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending…';
+
+          fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+          }).then(function(response) {
+            if (response.ok) {
+              form.style.display = 'none';
+              successDiv.style.display = 'flex';
+            } else {
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Send Message';
+              alert('Something went wrong. Please try again or email us directly at team@cipheriq.io');
+            }
+          }).catch(function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+            alert('Network error. Please check your connection and try again.');
+          });
         });
       })();
       </script>
