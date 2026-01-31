@@ -1,0 +1,171 @@
+{{ define "main" }}
+
+<!-- Product Hero -->
+<section class="page-hero">
+  <div class="container">
+    <h1>The CipherIQ Platform</h1>
+    <p class="hero-sub">Four open-source tools. One enterprise platform. Complete cryptographic observability.</p>
+  </div>
+</section>
+
+<!-- Open Source Tools -->
+<section class="section" id="tools">
+  <div class="container">
+    <div class="section-header">
+      <h2>Open-Source Foundation</h2>
+      <p>Each tool works standalone. Together, they form the most comprehensive cryptographic observability stack available.</p>
+    </div>
+
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-header">
+          <span class="tool-badge">Static Analysis</span>
+          <h3>cbom-generator</h3>
+        </div>
+        <p>Static cryptographic asset discovery. Scans Linux filesystems, firmware images, and container layers. Outputs CycloneDX-compliant Cryptographic Bill of Materials with PQC classification for 48+ NIST algorithms.</p>
+        <div class="tool-features">
+          <span>Filesystem scanning</span>
+          <span>Firmware analysis</span>
+          <span>Container support</span>
+          <span>CycloneDX output</span>
+          <span>PQC classifier</span>
+        </div>
+        <a href="https://github.com/CipherIQ/cbom-generator" class="tool-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-header">
+          <span class="tool-badge">Network Analysis</span>
+          <h3>pqc-flow</h3>
+        </div>
+        <p>Passive network protocol analyzer. Detects PQC support and cipher suite negotiation in TLS 1.3, SSH, IKEv2, and QUIC traffic. First-flight packet analysis only — no decryption, no interception, no keys.</p>
+        <div class="tool-features">
+          <span>TLS 1.3</span>
+          <span>SSH</span>
+          <span>IKEv2</span>
+          <span>QUIC</span>
+          <span>Passive capture</span>
+        </div>
+        <a href="https://github.com/CipherIQ/pqc-flow" class="tool-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-header">
+          <span class="tool-badge">Runtime Monitoring</span>
+          <h3>crypto-tracer</h3>
+        </div>
+        <p>eBPF-based runtime cryptographic monitoring. Zero-overhead kernel-level tracing of OpenSSL and libcrypto operations. See exactly which algorithms, key sizes, and cipher suites are used in production — without touching the application.</p>
+        <div class="tool-features">
+          <span>eBPF probes</span>
+          <span>Zero overhead</span>
+          <span>OpenSSL tracing</span>
+          <span>Read-only</span>
+          <span>Production-safe</span>
+        </div>
+        <a href="https://github.com/CipherIQ/crypto-tracer" class="tool-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-header">
+          <span class="tool-badge">Visualization</span>
+          <h3>cbom-explorer</h3>
+        </div>
+        <p>Web-based CBOM visualization and exploration. Interactive dependency graphs, PQC readiness dashboard, and certificate chain viewer. Upload any CycloneDX CBOM and instantly understand your cryptographic landscape.</p>
+        <div class="tool-features">
+          <span>Interactive graphs</span>
+          <span>PQC dashboard</span>
+          <span>Cert chain viewer</span>
+          <span>CBOM upload</span>
+        </div>
+        <a href="https://github.com/CipherIQ/cbom-explorer" class="tool-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commercial Platform -->
+<section class="section section-alt" id="platform">
+  <div class="container">
+    <div class="section-header">
+      <h2>Enterprise Platform</h2>
+      <p>A distributed architecture that scales from a single server to thousands of endpoints.</p>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-box arch-endpoint">
+          <h4>Endpoints</h4>
+          <p>Lightweight C agents (~2MB)</p>
+          <div class="arch-sub">
+            <span>cbom-generator</span>
+            <span>crypto-tracer</span>
+            <span>pqc-flow</span>
+          </div>
+        </div>
+        <div class="arch-arrow">
+          <span>gRPC/HTTP2</span>
+          <span>TLS 1.3 + mTLS</span>
+          <span>PSK (quantum-safe)</span>
+        </div>
+        <div class="arch-box arch-collector">
+          <h4>Central Collector</h4>
+          <p>Go service + PostgreSQL/TimescaleDB</p>
+          <div class="arch-sub">
+            <span>Data ingestion</span>
+            <span>Correlation engine</span>
+            <span>Policy engine</span>
+          </div>
+        </div>
+        <div class="arch-arrow">
+          <span>API</span>
+        </div>
+        <div class="arch-box arch-ui">
+          <h4>Web UI</h4>
+          <p>Dashboard &amp; management</p>
+          <div class="arch-sub">
+            <span>Asset browser</span>
+            <span>Correlation views</span>
+            <span>PQC scoring</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform Features -->
+    <div class="grid-3" style="margin-top: 4rem;">
+      <div class="feature-card">
+        <h3>Correlation Engine</h3>
+        <p>Automatically matches static CBOM assets against runtime observations. Detects shadow cryptography, configuration drift, and algorithms that aren't in your bill of materials.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Policy Engine</h3>
+        <p>Define cryptographic policies. Continuous evaluation against live data. Automated alerting when endpoints violate compliance requirements. Built-in CNSA 2.0 policy templates.</p>
+      </div>
+      <div class="feature-card">
+        <h3>PQC Readiness Scoring</h3>
+        <p>Per-endpoint and organization-wide scoring of post-quantum readiness. Track migration progress. Identify the highest-risk assets. Generate compliance reports.</p>
+      </div>
+    </div>
+
+    <!-- Transport Security -->
+    <div class="highlight-box">
+      <h3>Quantum-Safe Transport</h3>
+      <p>Agent-to-collector communication uses gRPC over HTTP/2 with TLS 1.3, mutual TLS authentication, and pre-shared key support for quantum-safe key establishment. We practice what we preach — CipherIQ's own transport is designed for the post-quantum era.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" id="product-cta">
+  <div class="container cta-final">
+    <h2>See CipherIQ in action</h2>
+    <p>Start with the open-source tools or talk to us about the enterprise platform.</p>
+    <div class="hero-ctas">
+      <a href="https://github.com/CipherIQ" class="btn btn-primary" target="_blank" rel="noopener">Get Started — Open Source</a>
+      <a href="/contact/" class="btn btn-outline">Book a Demo</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}

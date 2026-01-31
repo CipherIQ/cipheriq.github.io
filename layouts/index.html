@@ -1,0 +1,246 @@
+{{ define "main" }}
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1>Cryptographic Observability<br>for the Quantum Era</h1>
+    <p class="hero-sub">You can't migrate what you can't see.</p>
+    <p class="hero-desc">CipherIQ combines static discovery, runtime monitoring, and drift detection to give you complete visibility into your cryptographic posture — before quantum computers make today's encryption obsolete.</p>
+    <div class="hero-ctas">
+      <a href="https://github.com/CipherIQ" class="btn btn-primary" target="_blank" rel="noopener">Get Started — Open Source</a>
+      <a href="/contact/" class="btn btn-outline">Book a Demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Bar -->
+<section class="trust-bar">
+  <div class="container">
+    <div class="trust-items">
+      <span>CycloneDX</span>
+      <span class="trust-dot">·</span>
+      <span>NIST PQC Standards</span>
+      <span class="trust-dot">·</span>
+      <span>GPL 3.0</span>
+      <span class="trust-dot">·</span>
+      <a href="https://github.com/CipherIQ" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="section-header">
+      <h2>What you configure ≠ what runs in production</h2>
+      <p>Static analysis tells you what <em>should</em> be there. Runtime tells you what <em>actually</em> is. The gap between them is where risk lives.</p>
+    </div>
+    <div class="grid-3">
+      <div class="problem-card">
+        <div class="problem-icon">⚙️</div>
+        <h3>Configuration says TLS 1.3</h3>
+        <p class="problem-vs">vs</p>
+        <p>Production servers negotiating TLS 1.2 with RSA-2048 due to client compatibility fallbacks.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📦</div>
+        <h3>SBOM lists OpenSSL 3.2</h3>
+        <p class="problem-vs">vs</p>
+        <p>Containers running OpenSSL 1.1.1 from a cached base image with known vulnerabilities.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🔑</div>
+        <h3>Policy mandates AES-256-GCM</h3>
+        <p class="problem-vs">vs</p>
+        <p>Legacy microservices still calling 3DES through deprecated library paths at runtime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="section section-alt" id="how">
+  <div class="container">
+    <div class="section-header">
+      <h2>How It Works</h2>
+      <p>Three layers of cryptographic intelligence, working together.</p>
+    </div>
+    <div class="grid-3">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Scan</h3>
+        <p class="step-label">Static Discovery &amp; CBOM</p>
+        <p>Analyze filesystems, firmware, and containers. Generate a CycloneDX Cryptographic Bill of Materials. Classify every algorithm against 48+ NIST PQC standards.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Monitor</h3>
+        <p class="step-label">Runtime eBPF + Network</p>
+        <p>Zero-overhead kernel tracing of actual cryptographic operations. Passive network analysis of TLS, SSH, IKEv2, and QUIC. See what's really running.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Correlate</h3>
+        <p class="step-label">Drift Detection</p>
+        <p>Match static assets against runtime observations. Detect configuration drift, shadow crypto, and migration gaps. Alert on policy violations in real time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why CipherIQ -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-header">
+      <h2>Why CipherIQ</h2>
+    </div>
+    <div class="grid-4">
+      <div class="diff-card">
+        <div class="diff-icon">🔍</div>
+        <h3>Dual-Layer Visibility</h3>
+        <p>Static + runtime analysis in one platform. No other tool gives you both what's configured and what's actually executing.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🔓</div>
+        <h3>Open-Core Model</h3>
+        <p>Four open-source tools under GPL 3.0. Start free, scale to enterprise when you're ready. No vendor lock-in on your data.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">📐</div>
+        <h3>Standards-Based</h3>
+        <p>Built on CycloneDX CBOM and NIST PQC standards. Every output is interoperable, auditable, and future-proof.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🛡️</div>
+        <h3>Production-Safe</h3>
+        <p>Read-only eBPF probes. Passive network capture. Zero performance impact. Designed for production from day one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Use Cases -->
+<section class="section section-alt" id="usecases">
+  <div class="container">
+    <div class="section-header">
+      <h2>Built for Critical Infrastructure</h2>
+      <p>Where cryptographic visibility matters most.</p>
+    </div>
+    <div class="grid-4">
+      <div class="usecase-card">
+        <h3>IoT &amp; OT</h3>
+        <p>Automotive, medical devices, industrial control systems. Devices with 20–30 year lifecycles need PQC readiness today.</p>
+        <span class="usecase-tags">UN R155 · IEC 62443</span>
+      </div>
+      <div class="usecase-card">
+        <h3>Healthcare</h3>
+        <p>Patient data with 50+ year retention. Medical devices with embedded cryptography. HIPAA compliance with quantum-safe requirements.</p>
+        <span class="usecase-tags">HIPAA · FDA</span>
+      </div>
+      <div class="usecase-card">
+        <h3>Financial Services</h3>
+        <p>Transaction security, regulatory compliance, long-lived financial records. Protect against harvest-now-decrypt-later attacks.</p>
+        <span class="usecase-tags">SOX · PCI DSS</span>
+      </div>
+      <div class="usecase-card">
+        <h3>Government &amp; Defense</h3>
+        <p>CNSA 2.0 mandates phased PQC migration starting 2027. CipherIQ provides the visibility to plan, execute, and verify.</p>
+        <span class="usecase-tags">CNSA 2.0 · NIST</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Urgency / Timeline -->
+<section class="section section-dark" id="urgency">
+  <div class="container">
+    <div class="section-header">
+      <h2>The quantum risk isn't coming — it's already here.</h2>
+      <p>"Harvest now, decrypt later" attacks mean your encrypted data is being collected today for decryption by future quantum computers. The migration timeline is measured in years, not months.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-desc">NIST finalizes first PQC standards<br>(ML-KEM, ML-DSA, SLH-DSA)</div>
+      </div>
+      <div class="timeline-connector"></div>
+      <div class="timeline-item">
+        <div class="timeline-year">2027</div>
+        <div class="timeline-desc">CNSA 2.0 Phase 1: Software &amp; firmware<br>must support PQC algorithms</div>
+      </div>
+      <div class="timeline-connector"></div>
+      <div class="timeline-item">
+        <div class="timeline-year">2033</div>
+        <div class="timeline-desc">CNSA 2.0 Phase 2: Full PQC-only<br>for national security systems</div>
+      </div>
+      <div class="timeline-connector"></div>
+      <div class="timeline-item">
+        <div class="timeline-year">2035</div>
+        <div class="timeline-desc">Projected: Cryptographically-relevant<br>quantum computers operational</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Open Source vs Commercial -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2>Open Source + Commercial</h2>
+      <p>Start with free tools. Scale with the enterprise platform.</p>
+    </div>
+    <div class="comparison">
+      <div class="comparison-col">
+        <div class="comparison-header">
+          <h3>Open Source</h3>
+          <span class="comparison-price">Free forever</span>
+        </div>
+        <ul>
+          <li>cbom-generator — static CBOM discovery</li>
+          <li>cbom-explorer — web-based visualization</li>
+          <li>crypto-tracer — eBPF runtime monitoring</li>
+          <li>pqc-flow — passive network analysis</li>
+          <li>CycloneDX standard output</li>
+          <li>PQC classification (48+ algorithms)</li>
+          <li>GPL 3.0 license</li>
+          <li>Community support</li>
+        </ul>
+        <a href="https://github.com/CipherIQ" class="btn btn-outline" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+      <div class="comparison-col comparison-col-featured">
+        <div class="comparison-header">
+          <h3>Enterprise Platform</h3>
+          <span class="comparison-price">Contact sales</span>
+        </div>
+        <ul>
+          <li>Everything in Open Source, plus:</li>
+          <li>Distributed agent-collector architecture</li>
+          <li>Central correlation engine</li>
+          <li>Policy engine &amp; alerting</li>
+          <li>Web UI dashboard &amp; reporting</li>
+          <li>PQC readiness scoring</li>
+          <li>Compliance frameworks (CNSA 2.0, HIPAA, SOX)</li>
+          <li>AI Assistant</li>
+          <li>Priority support &amp; SLA</li>
+        </ul>
+        <a href="/contact/" class="btn btn-primary">Talk to Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="section section-alt" id="cta">
+  <div class="container cta-final">
+    <h2>Ready to see your cryptographic posture?</h2>
+    <p>Get complete visibility into what's configured, what's running, and where the gaps are.</p>
+    <div class="hero-ctas">
+      <a href="https://github.com/CipherIQ" class="btn btn-primary" target="_blank" rel="noopener">Start Free</a>
+      <a href="/contact/" class="btn btn-outline">Talk to Sales</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}

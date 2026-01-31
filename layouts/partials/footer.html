@@ -1,0 +1,37 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="/images/cipheriq_logo_white.svg" alt="CipherIQ" height="28">
+        <p>Cryptographic observability for the quantum era. Open-source foundation, enterprise-ready platform.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/product/">Platform Overview</a></li>
+          <li><a href="https://github.com/CipherIQ" target="_blank" rel="noopener">Open Source Tools</a></li>
+          <li><a href="https://docs.cipheriq.io" target="_blank" rel="noopener">Documentation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/whitepaper/">Whitepaper</a></li>
+          <li><a href="https://github.com/CipherIQ" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="mailto:{{ .Site.Params.email }}">{{ .Site.Params.email }}</a></li>
+          <li><a href="mailto:{{ .Site.Params.salesEmail }}">{{ .Site.Params.salesEmail }}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{ now.Year }} Graziano Labs Corp. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

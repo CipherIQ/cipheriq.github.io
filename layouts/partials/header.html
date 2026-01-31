@@ -1,0 +1,21 @@
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="/" class="nav-logo">
+      <img src="/images/cipheriq_logo.svg" alt="CipherIQ" height="32">
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ul class="nav-links">
+      {{ range .Site.Menus.main }}
+      <li>
+        <a href="{{ .URL }}"{{ with .Params.external }} target="_blank" rel="noopener noreferrer"{{ end }}>
+          {{ .Name }}{{ with .Params.external }} <span class="external-icon">↗</span>{{ end }}
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </nav>
+</header>

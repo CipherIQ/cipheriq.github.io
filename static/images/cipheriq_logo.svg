@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <!-- CipherIQ Logo - Rounded Brackets - Primary -->
+  <!-- Yin Min Blue: #3B82B6 -->
+  
+  <g transform="translate(12, 18)">
+    <!-- Left bracket with rounded corner -->
+    <path d="M 20 0 L 8 0 Q 4 0 4 4 L 4 60 Q 4 64 8 64 L 20 64" fill="none" stroke="#3B82B6" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Right bracket with rounded corner -->
+    <path d="M 48 0 L 60 0 Q 64 0 64 4 L 64 60 Q 64 64 60 64 L 48 64" fill="none" stroke="#3B82B6" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Center dot -->
+    <circle cx="34" cy="32" r="9" fill="#3B82B6"/>
+  </g>
+  
+  <!-- CipherIQ Text -->
+  <text x="95" y="62" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="600" fill="#3B82B6" letter-spacing="0.5">CipherIQ</text>
+</svg>

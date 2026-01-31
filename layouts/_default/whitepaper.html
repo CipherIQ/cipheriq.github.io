@@ -1,0 +1,92 @@
+{{ define "main" }}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-label">Whitepaper</span>
+    <h1>Building a Distributed Cryptographic Bill of Materials Architecture for the Post-Quantum Era</h1>
+    <p class="whitepaper-author">Marco Graziano, CEO — Graziano Labs Corp.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container whitepaper-content">
+    <div class="whitepaper-abstract">
+      <h2>Abstract</h2>
+      <p>As organizations prepare for the post-quantum cryptography (PQC) era, they face a critical challenge: gaining comprehensive visibility into the cryptographic assets scattered across their infrastructure. This paper presents the architecture of a distributed Cryptographic Bill of Materials (CBOM) system that combines static analysis with runtime monitoring to provide complete cryptographic observability.</p>
+      <p>The proposed architecture addresses a fundamental gap in existing approaches: static analysis alone cannot capture the cryptographic operations that actually occur at runtime, while runtime monitoring alone lacks the context of what was intended. By correlating both data sources, organizations can detect configuration drift, shadow cryptography, and migration gaps — the three most critical risk factors in any PQC transition.</p>
+    </div>
+
+    <div class="whitepaper-sections">
+      <h2>Key Sections</h2>
+      <div class="wp-section-grid">
+        <div class="wp-section-card">
+          <div class="wp-section-num">01</div>
+          <h3>Architecture Overview</h3>
+          <p>Distributed agent-collector model with three data acquisition layers: static filesystem analysis, kernel-level runtime tracing, and passive network monitoring.</p>
+        </div>
+        <div class="wp-section-card">
+          <div class="wp-section-num">02</div>
+          <h3>Agent Design</h3>
+          <p>Lightweight C-based agents (~2MB footprint) deployed on every endpoint. Zero-overhead eBPF probes for production-safe runtime observation without application modification.</p>
+        </div>
+        <div class="wp-section-card">
+          <div class="wp-section-num">03</div>
+          <h3>CBOM Generation</h3>
+          <p>CycloneDX-compliant Cryptographic Bill of Materials generation with PQC classification against 48+ NIST algorithms. Supports firmware, containers, and bare-metal systems.</p>
+        </div>
+        <div class="wp-section-card">
+          <div class="wp-section-num">04</div>
+          <h3>Correlation Engine</h3>
+          <p>The core innovation: matching static CBOM assets against runtime observations to detect drift, shadow crypto, and verify migration completeness.</p>
+        </div>
+        <div class="wp-section-card">
+          <div class="wp-section-num">05</div>
+          <h3>Policy Engine</h3>
+          <p>Continuous compliance evaluation against organizational policies and regulatory frameworks (CNSA 2.0, HIPAA, SOX). Automated alerting and reporting.</p>
+        </div>
+        <div class="wp-section-card">
+          <div class="wp-section-num">06</div>
+          <h3>Quantum-Safe Transport</h3>
+          <p>Agent-to-collector communication secured with TLS 1.3, mutual TLS, and pre-shared key support for quantum-resistant key establishment.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Insight -->
+    <div class="highlight-box">
+      <h3>The Core Insight</h3>
+      <p>Traditional security tools treat cryptographic configuration as a point-in-time audit. But cryptographic posture is dynamic — it changes with every deployment, library update, and configuration change. A CBOM must be a <strong>living document</strong> that reflects both what is intended and what is actually running.</p>
+    </div>
+
+    <!-- Architecture Highlight -->
+    <div class="whitepaper-arch">
+      <h2>Three-Layer Data Acquisition</h2>
+      <div class="grid-3">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Static Layer</h3>
+          <p>Filesystem scanning of binaries, libraries, certificates, and configuration files. Generates baseline CBOM with algorithm inventory and PQC classification.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Runtime Layer</h3>
+          <p>eBPF probes on OpenSSL/libcrypto function calls. Captures actual algorithm usage, key sizes, and cipher suite negotiations without application modification.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Network Layer</h3>
+          <p>Passive protocol analysis of TLS 1.3, SSH, IKEv2, and QUIC. First-flight packet inspection reveals cipher suite capabilities and PQC support in transit.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read CTA -->
+    <div class="whitepaper-cta">
+      <h2>Read the Full Paper</h2>
+      <p>The complete whitepaper includes detailed architecture diagrams, implementation specifics, performance benchmarks, and deployment strategies.</p>
+      <a href="https://marcoeg.medium.com/building-a-distributed-cryptographic-bill-of-materials-architecture-for-the-post-quantum-era-715b81138392" class="btn btn-primary" target="_blank" rel="noopener">Read on Medium →</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}
