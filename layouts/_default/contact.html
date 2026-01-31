@@ -44,36 +44,118 @@
 
       <div class="contact-form-wrap">
         <h2>Send a Message</h2>
-        <form action="https://formspree.io/f/xyzplaceholder" method="POST" class="contact-form">
+        <form action="https://formspree.io/f/xnjvedwq" method="POST" class="contact-form" id="contactForm" novalidate>
           <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input type="text" id="name" name="name" required minlength="2" maxlength="100"
+                   placeholder="e.g. Jane Smith"
+                   pattern="^[A-Za-zÀ-ÖØ-öø-ÿ'\-\.\s]{2,}$"
+                   title="Please enter your full name (at least 2 characters, letters only)">
+            <span class="form-error" id="name-error"></span>
           </div>
           <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+            <label for="email">Work Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required maxlength="254"
+                   placeholder="jane@company.com"
+                   title="Please use your work email address">
+            <span class="form-error" id="email-error"></span>
           </div>
           <div class="form-group">
-            <label for="company">Company</label>
-            <input type="text" id="company" name="company">
+            <label for="company">Company <span class="required">*</span></label>
+            <input type="text" id="company" name="company" required minlength="2" maxlength="200"
+                   placeholder="e.g. Acme Corp"
+                   title="Please enter your company or organization name">
+            <span class="form-error" id="company-error"></span>
           </div>
           <div class="form-group">
             <label for="subject">Subject</label>
-            <select id="subject" name="subject">
-              <option value="general">General Inquiry</option>
+            <select id="subject" name="subject" required>
+              <option value="" disabled selected>Select a topic…</option>
               <option value="demo">Request a Demo</option>
               <option value="sales">Sales / Pricing</option>
               <option value="support">Technical Support</option>
               <option value="partnership">Partnership</option>
+              <option value="general">General Inquiry</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
+            <label for="message">Message <span class="required">*</span></label>
+            <textarea id="message" name="message" rows="5" required minlength="20" maxlength="5000"
+                      placeholder="Tell us how we can help — the more detail, the faster we can respond."></textarea>
+            <span class="form-error" id="message-error"></span>
           </div>
-          <button type="submit" class="btn btn-primary">Send Message</button>
+          <!-- honeypot -->
+          <div style="position:absolute;left:-9999px;" aria-hidden="true">
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Send Message</button>
         </form>
       </div>
+
+      <script>
+      (function() {
+        const form = document.getElementById('contactForm');
+        const freeEmailDomains = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com',
+          'mail.com','protonmail.com','icloud.com','yandex.com','zoho.com','gmx.com',
+          'live.com','msn.com','inbox.com','me.com','mac.com','fastmail.com','tutanota.com'];
+
+        function showError(id, msg) {
+          const el = document.getElementById(id + '-error');
+          if (el) { el.textContent = msg; el.style.display = 'block'; }
+          const input = document.getElementById(id);
+          if (input) input.classList.add('input-error');
+        }
+        function clearError(id) {
+          const el = document.getElementById(id + '-error');
+          if (el) { el.textContent = ''; el.style.display = 'none'; }
+          const input = document.getElementById(id);
+          if (input) input.classList.remove('input-error');
+        }
+
+        // Clear errors on input
+        ['name','email','company','message'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.addEventListener('input', function() { clearError(id); });
+        });
+
+        form.addEventListener('submit', function(e) {
+          let valid = true;
+
+          // Name: at least 2 chars, looks like a real name (has a space for first+last)
+          const name = document.getElementById('name').value.trim();
+          if (name.length < 2) {
+            showError('name', 'Please enter your full name.'); valid = false;
+          } else if (!/^[A-Za-zÀ-ÖØ-öø-ÿ'\-\.\s]{2,}$/.test(name)) {
+            showError('name', 'Name should only contain letters.'); valid = false;
+          } else { clearError('name'); }
+
+          // Email: valid format + discourage free providers
+          const email = document.getElementById('email').value.trim();
+          const emailDomain = email.split('@')[1]?.toLowerCase();
+          if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError('email', 'Please enter a valid email address.'); valid = false;
+          } else if (freeEmailDomains.indexOf(emailDomain) !== -1) {
+            showError('email', 'Please use your work email address.');  valid = false;
+          } else { clearError('email'); }
+
+          // Company: at least 2 chars, not just numbers/symbols
+          const company = document.getElementById('company').value.trim();
+          if (company.length < 2) {
+            showError('company', 'Please enter your company name.'); valid = false;
+          } else if (/^[\d\s\-\_\.]+$/.test(company)) {
+            showError('company', 'Please enter a valid company name.'); valid = false;
+          } else { clearError('company'); }
+
+          // Message: at least 20 chars
+          const message = document.getElementById('message').value.trim();
+          if (message.length < 20) {
+            showError('message', 'Please provide at least a few sentences so we can help effectively.'); valid = false;
+          } else { clearError('message'); }
+
+          if (!valid) { e.preventDefault(); }
+        });
+      })();
+      </script>
     </div>
   </div>
 </section>

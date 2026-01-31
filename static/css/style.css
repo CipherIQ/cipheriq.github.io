@@ -820,6 +820,8 @@ ul {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--bg);
+  width: 100%;
+  min-width: 0;
 }
 
 .feature-card h3 {
@@ -1054,6 +1056,31 @@ ul {
   align-self: flex-start;
   border: none;
   font-family: inherit;
+}
+
+.required {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+.form-error {
+  display: none;
+  color: #e53e3e;
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+  line-height: 1.4;
+}
+
+.form-group input.input-error,
+.form-group textarea.input-error {
+  border-color: #e53e3e;
+  box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.15);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a0aec0;
+  font-style: italic;
 }
 
 /* ============================================
