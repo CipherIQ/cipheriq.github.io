@@ -12,12 +12,76 @@
   <meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
   <meta property="og:url" content="{{ .Permalink }}">
   <meta property="og:site_name" content="CipherIQ">
-  <meta property="og:image" content="{{ .Site.BaseURL }}images/cipheriq_icon_256.png">
+  <meta property="og:image" content="{{ .Site.BaseURL }}images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
 
   <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — CipherIQ{{ end }}">
   <meta name="twitter:description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta name="twitter:image" content="{{ .Site.BaseURL }}images/og-card.png">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="{{ .Permalink }}">
+
+  <!-- JSON-LD Structured Data -->
+  {{ if .IsHome }}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "CipherIQ",
+    "legalName": "Graziano Labs Corp.",
+    "url": "https://cipheriq.io",
+    "logo": "https://cipheriq.io/images/cipheriq_icon_512.png",
+    "description": "{{ .Site.Params.description }}",
+    "foundingDate": "2025",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "200 Sheridan Ave. Suite 100",
+      "addressLocality": "Palo Alto",
+      "addressRegion": "CA",
+      "postalCode": "94306",
+      "addressCountry": "US"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "team@cipheriq.io",
+      "contactType": "customer service"
+    },
+    "sameAs": [
+      "https://github.com/CipherIQ"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "CipherIQ",
+    "url": "https://cipheriq.io"
+  }
+  </script>
+  {{ else }}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ .Title }}",
+    "description": "{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}",
+    "url": "{{ .Permalink }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "CipherIQ",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://cipheriq.io/images/cipheriq_icon_512.png"
+      }
+    }
+  }
+  </script>
+  {{ end }}
 
   <link rel="icon" type="image/png" href="/images/favicon.png">
   <link rel="stylesheet" href="/css/style.css">
