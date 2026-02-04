@@ -1,0 +1,105 @@
+{{ define "main" }}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-label">Research</span>
+    <h1>Publications & Technical Research</h1>
+    <p class="hero-sub" style="max-width: 640px; margin: 1rem auto 0;">Peer-reviewed research from Graziano Labs Corp. advancing the science of cryptographic observability.</p>
+  </div>
+</section>
+
+<!-- Featured Paper -->
+<section class="section" style="padding: 3rem 0;">
+  <div class="container container-narrow">
+
+    <div class="card" style="padding: 2.5rem; border-left: 4px solid var(--brand);">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        <span style="background: var(--brand); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;">Peer-Reviewed</span>
+        <span style="font-size: 0.85rem; color: var(--text-light);">December 2025</span>
+      </div>
+
+      <h2 style="font-size: 1.5rem; line-height: 1.35; margin-bottom: 0.75rem;">
+        Cryptographic Observability and Drift Detection: A Dual-Layer Model and Reference Implementation
+      </h2>
+
+      <p style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 1.5rem;">
+        Marco Graziano — Graziano Labs Corp.
+      </p>
+
+      <div class="whitepaper-abstract" style="margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Abstract</h3>
+        <p style="font-size: 0.95rem; line-height: 1.75;">
+          Cryptographic systems deployed in production often differ substantially from their documented or configured cryptographic posture, creating blind spots that complicate security analysis and post-quantum migration planning. We introduce a dual-layer observability model that distinguishes between configured cryptography (static layer) and observed cryptography (runtime layer), and formalize cryptographic drift as the mismatch between these layers. We define two classes of drift: Configured-Not-Observed (CNO) and Observed-Not-Configured (ONC), and establish basic properties of drift detection under this model.
+        </p>
+        <p style="font-size: 0.95rem; line-height: 1.75;">
+          We present a reference implementation that realizes the model by combining binary-level cryptographic inventorying, runtime tracing of cryptographic operations, and passive network protocol analysis. The implementation enables detection of undocumented libraries, dynamically loaded cryptographic code, and network-visible cryptographic behavior without payload decryption. Experimental results on Linux and embedded systems demonstrate scalable static analysis, production-safe runtime tracing, and high-throughput network observation, and reveal substantial cryptographic drift in real deployments.
+        </p>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Key Contributions</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div style="padding: 1rem; background: var(--bg-alt); border-radius: var(--radius);">
+            <p style="font-weight: 600; margin-bottom: 0.25rem;">Dual-Layer Model</p>
+            <p style="font-size: 0.875rem; color: var(--text-light);">Formal framework distinguishing static configuration from runtime behavior, enabling systematic drift detection.</p>
+          </div>
+          <div style="padding: 1rem; background: var(--bg-alt); border-radius: var(--radius);">
+            <p style="font-weight: 600; margin-bottom: 0.25rem;">Drift Taxonomy</p>
+            <p style="font-size: 0.875rem; color: var(--text-light);">Two drift classes — CNO (configured but not observed) and ONC (observed but not configured) — with formal properties.</p>
+          </div>
+          <div style="padding: 1rem; background: var(--bg-alt); border-radius: var(--radius);">
+            <p style="font-weight: 600; margin-bottom: 0.25rem;">Reference Implementation</p>
+            <p style="font-size: 0.875rem; color: var(--text-light);">Four open-source tools: cbom-generator, crypto-tracer (eBPF), pqc-flow, and cbom-explorer.</p>
+          </div>
+          <div style="padding: 1rem; background: var(--bg-alt); border-radius: var(--radius);">
+            <p style="font-weight: 600; margin-bottom: 0.25rem;">Experimental Validation</p>
+            <p style="font-size: 0.875rem; color: var(--text-light);">90%+ asset coverage on embedded Linux with &lt;0.5% CPU overhead and 12,000+ files/min throughput.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+        <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6110226" class="btn btn-primary" target="_blank" rel="noopener">Read on SSRN →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Whitepaper -->
+<section class="section" style="background: var(--bg-alt); padding: 2.5rem 0;">
+  <div class="container container-narrow">
+    <h2 class="section-title">Industry Whitepapers</h2>
+
+    <div class="card" style="padding: 2rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <span style="background: var(--text-light); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;">Whitepaper</span>
+        <span style="font-size: 0.85rem; color: var(--text-light);">2025</span>
+      </div>
+      <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">
+        Building a Distributed Cryptographic Bill of Materials Architecture for the Post&#8209;Quantum Era
+      </h3>
+      <p style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 1rem;">
+        Marco Graziano — Graziano Labs Corp.
+      </p>
+      <p style="font-size: 0.95rem; line-height: 1.75; margin-bottom: 1.25rem;">
+        Presents the architecture of a distributed CBOM system that combines static analysis with runtime monitoring to provide complete cryptographic observability. Covers the agent-collector model, three-layer data acquisition, correlation engine, and policy enforcement.
+      </p>
+      <a href="/whitepaper/" class="btn btn-outline">Read Whitepaper →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding: 2.5rem 0 3rem;">
+  <div class="container cta-final">
+    <h2>Built on Research, Ready for Production</h2>
+    <p>CipherIQ's open-source tools implement the models described in our research. Try them today.</p>
+    <div class="hero-ctas">
+      <a href="https://github.com/CipherIQ" class="btn btn-primary" target="_blank" rel="noopener">Get Started — Open Source</a>
+      <a href="/contact/" class="btn btn-outline">Talk to Sales</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}
