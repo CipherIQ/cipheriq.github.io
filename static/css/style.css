@@ -270,6 +270,47 @@ ul {
   flex-wrap: wrap;
 }
 
+.hero-scanner-cta {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.scanner-cta-title {
+  font-size: 1.35rem;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.scanner-cta-text {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.btn-scanner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--brand);
+  background: var(--brand-light);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+
+.btn-scanner:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
 /* ============================================
    Trust Bar
    ============================================ */
@@ -522,11 +563,18 @@ ul {
   margin: 0 auto;
 }
 
+.comparison-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+  max-width: 1100px;
+}
+
 .comparison-col {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 2rem;
   background: var(--bg);
+  display: flex;
+  flex-direction: column;
 }
 
 .comparison-col-featured {
@@ -554,6 +602,7 @@ ul {
 
 .comparison-col ul {
   margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
 
 .comparison-col ul li {
