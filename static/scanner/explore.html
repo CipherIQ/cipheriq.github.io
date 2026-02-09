@@ -1,0 +1,4569 @@
+<!DOCTYPE html>
+<!--
+  SPDX-License-Identifier: GPL-3.0-or-later
+
+  Copyright (c) 2025 Graziano Labs Corp.
+
+  This file is part of cbom-generator.
+
+  cbom-generator is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  For commercial licensing options, contact: sales@cipheriq.io
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBOM Explorer - CipherIQ</title>
+    <style>
+        /* ===== CSS Variables ===== */
+        :root {
+            /* CipherIQ Brand */
+            --color-primary: #3B82B6;
+            --color-primary-dark: #2563eb;
+            --color-primary-light: #60a5fa;
+
+            /* Status Colors */
+            --color-safe: #22c55e;
+            --color-transitional: #eab308;
+            --color-unsafe: #ef4444;
+
+            /* Light Theme (default) */
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-surface-hover: #f1f5f9;
+            --color-text: #1e293b;
+            --color-text-muted: #64748b;
+            --color-border: #e2e8f0;
+            --color-white: #ffffff;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --color-bg: #0f172a;
+            --color-surface: #1e293b;
+            --color-surface-hover: #334155;
+            --color-text: #f1f5f9;
+            --color-text-muted: #94a3b8;
+            --color-border: #334155;
+
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ===== Reset & Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--color-text);
+            background: var(--color-bg);
+            padding: 20px;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        /* ===== Layout ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--color-surface);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: linear-gradient(135deg, #3B82B6 0%, #1e40af 100%);
+            color: #ffffff;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .header p {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: block;
+        }
+
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        /* ===== File Upload Section ===== */
+        .upload-section {
+            padding: 20px 30px;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .upload-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .upload-text {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        #cbom-upload {
+            display: none;
+        }
+
+        .upload-btn {
+            padding: 10px 18px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .upload-btn:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .upload-filename {
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ===== Tab Navigation ===== */
+        .tabs {
+            display: flex;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 0 10px;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px 16px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            transition: all var(--transition-fast);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab:hover {
+            background: var(--color-surface-hover);
+            color: var(--color-primary);
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+            background: var(--color-surface-hover);
+        }
+
+        /* ===== Content Area ===== */
+        .content {
+            padding: 30px;
+            min-height: 400px;
+            background: var(--color-surface);
+            transition: background-color var(--transition-normal);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .welcome-message h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: var(--color-text);
+        }
+
+        .welcome-message p {
+            font-size: 1.2em;
+        }
+
+        /* ===== Card Component ===== */
+        .card {
+            background: var(--color-surface);
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card h3 {
+            color: var(--color-primary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            background: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            padding: 20px;
+            text-align: center;
+            font-size: 0.85em;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        [data-theme="dark"] .footer {
+            background: #0f172a;
+        }
+
+        .footer p {
+            margin: 4px 0;
+        }
+
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== Utility Classes ===== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        /* ===== Status Colors ===== */
+        .status-safe {
+            color: var(--color-safe);
+        }
+
+        .status-transitional {
+            color: var(--color-transitional);
+        }
+
+        .status-unsafe {
+            color: var(--color-unsafe);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-safe {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-transitional {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-unsafe {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ===== Phase 2: Dashboard Styles ===== */
+        .dashboard-header {
+            background: linear-gradient(135deg, #3B82B6 0%, #1e40af 100%);
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: #ffffff;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .risk-low {
+            background: var(--color-safe);
+            color: white;
+        }
+
+        .risk-medium {
+            background: var(--color-transitional);
+            color: #1e293b;
+        }
+
+        .risk-high {
+            background: #f97316;
+            color: white;
+        }
+
+        .risk-critical {
+            background: var(--color-unsafe);
+            color: white;
+        }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: var(--color-surface);
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            padding: 25px;
+            text-align: center;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-normal);
+        }
+
+        .status-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .status-card h3 {
+            font-size: 1.1em;
+            color: var(--color-text-muted);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .status-number {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .status-percentage {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .timeline-section {
+            background: var(--color-surface);
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .timeline-section h3 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .timeline-chart {
+            margin: 20px 0;
+        }
+
+        .priority-list {
+            background: var(--color-surface);
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            padding: 25px;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .priority-list h3 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .priority-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            background: var(--color-surface-hover);
+            border-radius: 5px;
+            font-size: 1.1em;
+            color: var(--color-text);
+            transition: background-color var(--transition-normal);
+        }
+
+        .priority-item.critical {
+            border-left-color: var(--color-unsafe);
+        }
+
+        .priority-item.high {
+            border-left-color: #f97316;
+        }
+
+        .priority-item.medium {
+            border-left-color: var(--color-transitional);
+        }
+
+        .priority-icon {
+            font-size: 1.3em;
+            margin-right: 10px;
+        }
+
+        /* ===== Phase 3: Certificate Heatmap Styles ===== */
+        .heatmap-header {
+            background: linear-gradient(135deg, #3B82B6 0%, #1e40af 100%);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .heatmap-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .heatmap-summary {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .heatmap-summary .total-count {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .heatmap-buckets {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .bucket-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .bucket-label {
+            width: 140px;
+            font-weight: 600;
+            font-size: 0.95em;
+            color: var(--color-text);
+        }
+
+        .bucket-bar-container {
+            flex: 1;
+            height: 30px;
+            background: var(--color-border);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bucket-bar {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .bucket-bar.expired {
+            background: #2d3748;
+        }
+
+        .bucket-bar.critical {
+            background: var(--color-unsafe);
+        }
+
+        .bucket-bar.warning {
+            background: #fd7e14;
+        }
+
+        .bucket-bar.caution {
+            background: var(--color-transitional);
+        }
+
+        .bucket-bar.good {
+            background: #7cb342;
+        }
+
+        .bucket-bar.excellent {
+            background: var(--color-safe);
+        }
+
+        .bucket-count {
+            width: 100px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .expiring-soon {
+            background: rgba(234, 179, 8, 0.1);
+            border-left: 4px solid var(--color-transitional);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        [data-theme="dark"] .expiring-soon {
+            background: rgba(234, 179, 8, 0.15);
+        }
+
+        .expiring-soon h3 {
+            color: var(--color-transitional);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .cert-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cert-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--color-surface);
+            border-radius: 5px;
+            border-left: 4px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease, background-color var(--transition-normal);
+        }
+
+        .cert-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cert-item.critical {
+            border-left-color: var(--color-unsafe);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .cert-item.warning {
+            border-left-color: #f97316;
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .cert-name {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .cert-days {
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+            margin-left: 10px;
+        }
+
+        .cert-days.critical {
+            color: var(--color-unsafe);
+            font-weight: 700;
+        }
+
+        .cert-days.warning {
+            color: #f97316;
+            font-weight: 600;
+        }
+
+        .cert-algorithm {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            font-family: monospace;
+        }
+
+        /* ===== Phase 4: Algorithm Analysis Styles ===== */
+        .algo-header {
+            background: linear-gradient(135deg, #3B82B6 0%, #1e40af 100%);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .algo-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .chart-container h3 {
+            color: var(--color-primary);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .chart-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+        }
+
+        .top-algorithms {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .top-algorithms h3 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .algo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .algo-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: var(--color-surface-hover);
+            border-radius: 8px;
+            transition: transform 0.2s ease, background-color var(--transition-normal);
+        }
+
+        .algo-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .algo-rank {
+            width: 30px;
+            height: 30px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .algo-name {
+            width: 180px;
+            font-weight: 600;
+            color: var(--color-text);
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .algo-bar-container {
+            flex: 1;
+            height: 24px;
+            background: var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .algo-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82B6 0%, #1e40af 100%);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .algo-count {
+            width: 60px;
+            text-align: right;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .algo-percentage {
+            width: 50px;
+            text-align: right;
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .no-data-message p {
+            font-size: 1.1em;
+        }
+
+        /* Pie chart legend */
+        .chart-legend {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        /* ===== Phase 5: Migration Timeline Styles ===== */
+        .timeline-header {
+            background: linear-gradient(135deg, #3B82B6 0%, #1e40af 100%);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .timeline-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .timeline-viz-container {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .timeline-viz-container h3 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .timeline-svg {
+            width: 100%;
+            min-width: 800px;
+        }
+
+        .milestones-section {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            margin-bottom: 20px;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .milestones-section h3 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .milestone-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: var(--color-surface-hover);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-primary);
+            transition: transform 0.2s ease, background-color var(--transition-normal);
+        }
+
+        .milestone-item:hover {
+            transform: translateX(5px);
+        }
+
+        .milestone-item.complete {
+            border-left-color: var(--color-safe);
+        }
+
+        .milestone-item.pending {
+            border-left-color: var(--color-primary);
+        }
+
+        .milestone-item.critical {
+            border-left-color: var(--color-unsafe);
+        }
+
+        .milestone-year {
+            min-width: 60px;
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--color-text);
+        }
+
+        .milestone-icon {
+            font-size: 1.5em;
+        }
+
+        .milestone-content {
+            flex: 1;
+        }
+
+        .milestone-phase {
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .milestone-description {
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+        }
+
+        .migration-waves {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .wave-card {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            text-align: center;
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .wave-card.wave-critical {
+            border-top: 4px solid var(--color-unsafe);
+        }
+
+        .wave-card.wave-standard {
+            border-top: 4px solid var(--color-transitional);
+        }
+
+        .wave-card.wave-longterm {
+            border-top: 4px solid var(--color-safe);
+        }
+
+        .wave-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: var(--color-text);
+        }
+
+        .wave-period {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            margin-bottom: 15px;
+        }
+
+        .wave-count {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .wave-card.wave-critical .wave-count {
+            color: var(--color-unsafe);
+        }
+
+        .wave-card.wave-standard .wave-count {
+            color: var(--color-transitional);
+        }
+
+        .wave-card.wave-longterm .wave-count {
+            color: var(--color-safe);
+        }
+
+        .wave-label {
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+        }
+
+        .wave-description {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        @media (max-width: 768px) {
+            .migration-waves {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== Phase 6: Explorer Styles ===== */
+        .explorer-header {
+            background: linear-gradient(135deg, #3B82B6 0%, #1e40af 100%);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .explorer-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .explorer-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .explorer-controls input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 1em;
+            background: var(--color-surface);
+            color: var(--color-text);
+            transition: border-color var(--transition-fast), background-color var(--transition-normal);
+        }
+
+        .explorer-controls input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .explorer-controls input[type="text"]::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .explorer-controls select {
+            padding: 12px 15px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 1em;
+            background: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+            min-width: 150px;
+            transition: border-color var(--transition-fast), background-color var(--transition-normal);
+        }
+
+        .explorer-controls select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .explorer-controls button {
+            padding: 12px 20px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .explorer-controls button:hover {
+            background: var(--color-primary-dark);
+        }
+
+        .explorer-stats {
+            background: var(--color-surface-hover);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+            transition: background-color var(--transition-normal);
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .component-card {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .component-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .component-ref {
+            font-family: monospace;
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .component-type-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .component-type-badge.certificate {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .component-type-badge.algorithm {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .component-type-badge.key {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .component-type-badge.protocol {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .component-type-badge.application {
+            background: #e0f7fa;
+            color: #00695c;
+        }
+
+        .component-type-badge.library {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .component-type-badge.other {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        /* Dark mode badge overrides */
+        [data-theme="dark"] .component-type-badge.certificate {
+            background: #1565c0;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .component-type-badge.algorithm {
+            background: #7b1fa2;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .component-type-badge.key {
+            background: #e65100;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .component-type-badge.protocol {
+            background: #2e7d32;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .component-type-badge.application {
+            background: #00695c;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .component-type-badge.library {
+            background: #c2185b;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .component-type-badge.other {
+            background: #616161;
+            color: #ffffff;
+        }
+
+        .component-name {
+            font-weight: 600;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+            color: var(--color-text);
+            word-break: break-word;
+        }
+
+        .component-pqc {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .component-pqc.pqc-safe {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .component-pqc.pqc-transitional {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .component-pqc.pqc-unsafe {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Dark mode PQC badge overrides */
+        [data-theme="dark"] .component-pqc.pqc-safe {
+            background: var(--color-safe);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .component-pqc.pqc-transitional {
+            background: var(--color-transitional);
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .component-pqc.pqc-unsafe {
+            background: var(--color-unsafe);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .component-expiration {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            margin-bottom: 10px;
+        }
+
+        .component-expiration.expiring-soon {
+            color: var(--color-unsafe);
+            font-weight: 600;
+        }
+
+        .component-expiration.expired {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .component-expiration.na {
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        .component-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .component-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .component-actions button:hover {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .page-info {
+            font-size: 0.9em;
+            color: var(--color-text-muted);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+            font-size: 1.1em;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            width: 90%;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--color-surface-hover);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        .modal-content pre {
+            background: var(--color-surface-hover);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+
+        /* Dependency tree styles */
+        .dependency-tree {
+            font-family: monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            background: var(--color-surface-hover);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .dep-root {
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .dep-child {
+            color: var(--color-text);
+        }
+
+        .dep-orphaned-label {
+            color: var(--color-text-muted);
+            font-style: italic;
+            font-size: 0.85em;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .dep-type-application { color: #00695c; }
+        .dep-type-protocol { color: #2e7d32; }
+        .dep-type-algorithm { color: #7b1fa2; }
+        .dep-type-certificate { color: #1565c0; }
+        .dep-type-key { color: #e65100; }
+
+        /* Phase 4: Provides relationship visual distinction */
+        .dep-provides {
+            font-style: italic;
+        }
+
+        .dep-type-application.dep-provides { color: #00897b; }
+        .dep-type-protocol.dep-provides { color: #43a047; }
+        .dep-type-algorithm.dep-provides { color: #8e24aa; }
+        .dep-type-certificate.dep-provides { color: #1e88e5; }
+        .dep-type-key.dep-provides { color: #fb8c00; }
+        .dep-type-library.dep-provides { color: #6a1b9a; }
+
+        .dependency-section {
+            margin-bottom: 20px;
+        }
+
+        .dependency-section h4 {
+            margin: 10px 0 8px;
+            color: #4a5568;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .dependency-section h4::before {
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .depends-section h4::before {
+            content: "→";
+            color: #1565c0;
+        }
+
+        .provides-section h4::before {
+            content: "←";
+            color: #43a047;
+        }
+
+        .provides-section .dependency-tree {
+            background: #f1f8f4;
+            border-left: 3px solid #43a047;
+        }
+
+        .depends-section .dependency-tree {
+            border-left: 3px solid #1565c0;
+        }
+
+        .no-deps-btn {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .explorer-controls {
+                flex-direction: column;
+            }
+
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Executive Summary Styles */
+        .summary-header {
+            background: linear-gradient(135deg, var(--color-primary), #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .summary-header h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.8em;
+        }
+
+        .summary-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .summary-card h3 {
+            margin: 0 0 15px 0;
+            color: var(--color-text);
+            font-size: 1.1em;
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 10px;
+        }
+
+        .summary-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .summary-stat:last-child {
+            border-bottom: none;
+        }
+
+        .summary-stat .label {
+            color: var(--color-text-muted);
+            font-size: 0.9em;
+        }
+
+        .summary-stat .value {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .summary-stat .value.safe { color: var(--color-safe); }
+        .summary-stat .value.transitional { color: var(--color-transitional); }
+        .summary-stat .value.unsafe { color: var(--color-unsafe); }
+
+        /* Phase 4: Sub-stat styles for relationship breakdown */
+        .summary-stat.sub-stat {
+            padding-left: 20px;
+            font-size: 0.9em;
+            border-bottom: none;
+        }
+
+        .summary-stat.sub-stat .label {
+            color: var(--color-text-muted);
+            font-family: 'Courier New', monospace;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: var(--color-surface-hover);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .action-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-icon {
+            font-size: 1.2em;
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-content .title {
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .action-content .description {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recommendation-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--color-text);
+        }
+
+        .recommendation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation-list .icon {
+            font-size: 1.1em;
+        }
+
+        .summary-export {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .summary-export button {
+            padding: 12px 30px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .summary-export button:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <!-- CipherIQ Logo (inline SVG) -->
+                <svg class="header-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" height="40">
+                    <g transform="translate(12, 18)">
+                        <path d="M 20 0 L 8 0 Q 4 0 4 4 L 4 60 Q 4 64 8 64 L 20 64" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+                        <path d="M 48 0 L 60 0 Q 64 0 64 4 L 64 60 Q 64 64 60 64 L 48 64" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+                        <circle cx="34" cy="32" r="9" fill="white"/>
+                    </g>
+                    <text x="95" y="62" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="600" fill="white" letter-spacing="0.5">CipherIQ</text>
+                </svg>
+                <div class="header-title">
+                    <h1>CBOM Explorer</h1>
+                    <p>Post-Quantum Cryptography Assessment Dashboard</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="themeManager.toggle()" title="Toggle dark/light mode">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <span class="theme-label">Theme</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="upload-section">
+            <div class="upload-container">
+                <span class="upload-text">Upload CBOM File:</span>
+                <label for="cbom-upload" class="upload-btn">📁 Choose File</label>
+                <input type="file" id="cbom-upload" accept=".json" />
+                <span id="upload-filename" class="upload-filename"></span>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">Dashboard</button>
+            <button class="tab" data-tab="certificates">Certificates</button>
+            <button class="tab" data-tab="algorithms">Algorithms</button>
+            <button class="tab" data-tab="libraries">Libraries</button>
+            <button class="tab" data-tab="timeline">Timeline</button>
+            <button class="tab" data-tab="explorer">Explorer</button>
+            <button class="tab" data-tab="summary">Summary</button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content" id="content">
+            <div id="dashboard-content" class="tab-content active">
+                <div class="welcome-message">
+                    <h2>Welcome to CBOM Explorer</h2>
+                    <p>Upload a CycloneDX CBOM file to begin analysis</p>
+                </div>
+            </div>
+            <div id="certificates-content" class="tab-content">
+                <h2>Certificate Lifecycle Heatmap</h2>
+                <p>Upload a CBOM to view certificate expiration tracking</p>
+            </div>
+            <div id="algorithms-content" class="tab-content">
+                <h2>Algorithm Distribution Analysis</h2>
+                <p>Upload a CBOM to view algorithm usage statistics</p>
+            </div>
+            <div id="libraries-content" class="tab-content">
+                <h2>Cryptographic Libraries</h2>
+                <p>Upload a CBOM to view library inventory and implementations</p>
+            </div>
+            <div id="timeline-content" class="tab-content">
+                <h2>Migration Timeline Visualizer</h2>
+                <p>Upload a CBOM to view PQC migration planning</p>
+            </div>
+            <div id="explorer-content" class="tab-content">
+                <h2>Interactive CBOM Explorer</h2>
+                <p>Upload a CBOM to browse and search components</p>
+            </div>
+            <div id="summary-content" class="tab-content">
+                <h2>Executive Summary</h2>
+                <p>Upload a CBOM to view key metrics</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>CBOM Explorer by <a href="https://cipheriq.io" target="_blank">CipherIQ</a> | Copyright © 2025 Graziano Labs Corp.</p>
+            <p>Privacy-first: All processing happens in your browser. No data is sent to external servers.</p>
+        </div>
+    </div>
+
+    <script>
+        /* ===== ThemeManager Class ===== */
+        class ThemeManager {
+            constructor() {
+                // Check for saved preference, then system preference, default to light
+                const savedTheme = localStorage.getItem('cbom-explorer-theme');
+                if (savedTheme) {
+                    this.theme = savedTheme;
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    this.theme = 'dark';
+                } else {
+                    this.theme = 'light';
+                }
+                this.apply();
+
+                // Listen for system theme changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (!localStorage.getItem('cbom-explorer-theme')) {
+                        this.theme = e.matches ? 'dark' : 'light';
+                        this.apply();
+                    }
+                });
+            }
+
+            toggle() {
+                this.theme = this.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('cbom-explorer-theme', this.theme);
+                this.apply();
+            }
+
+            apply() {
+                document.documentElement.setAttribute('data-theme', this.theme);
+            }
+        }
+
+        // Initialize theme manager immediately
+        const themeManager = new ThemeManager();
+
+        /* ===== CBOMParser Class ===== */
+        class CBOMParser {
+            constructor(jsonData) {
+                try {
+                    this.bom = JSON.parse(jsonData);
+                } catch (e) {
+                    throw new Error('Invalid JSON format');
+                }
+
+                // Validate required fields
+                if (this.bom.bomFormat !== 'CycloneDX') {
+                    throw new Error('Not a valid CycloneDX BOM');
+                }
+
+                if (!this.bom.specVersion || !this.bom.specVersion.startsWith('1.')) {
+                    throw new Error('Unsupported CycloneDX version');
+                }
+
+                this.components = this.bom.components || [];
+                this.metadata = this.bom.metadata || {};
+                this.dependencies = this.bom.dependencies || [];
+            }
+
+            getPQCMetadata() {
+                const properties = this.metadata.properties || [];
+
+                // First try to read from metadata.properties (for backward compatibility with test-simple.json)
+                const pqcKeys = [
+                    'safe_count', 'transitional_count', 'unsafe_count', 'deprecated_count',
+                    'break_2030_count', 'break_2035_count', 'break_2040_count', 'break_2045_count'
+                ];
+
+                const metadataCounts = {};
+                let hasMetadata = false;
+
+                pqcKeys.forEach(key => {
+                    const prop = properties.find(p => p.name === `cbom:pqc:${key}`);
+                    if (prop && prop.value && prop.value !== '0') {
+                        hasMetadata = true;
+                    }
+                    metadataCounts[key] = prop ? prop.value : '0';
+                });
+
+                // If metadata has PQC counts, use them
+                if (hasMetadata) {
+                    return metadataCounts;
+                }
+
+                // Otherwise, calculate from component properties
+
+                let safe = 0, transitional = 0, unsafe = 0, deprecated = 0;
+                let break_2030 = 0, break_2035 = 0, break_2040 = 0, break_2045 = 0;
+
+                this.components.forEach(comp => {
+                    const compProps = comp.properties || [];
+
+                    // Get PQC status from component properties
+                    const status = this.getPropertyValue(compProps, 'cbom:pqc:status');
+                    if (status === 'SAFE') safe++;
+                    else if (status === 'TRANSITIONAL') transitional++;
+                    else if (status === 'UNSAFE') unsafe++;
+                    else if (status === 'DEPRECATED') deprecated++;
+
+                    // Get break year estimate if available
+                    const breakEstimate = this.getPropertyValue(compProps, 'cbom:pqc:break_estimate');
+                    if (breakEstimate) {
+                        const year = parseInt(breakEstimate);
+                        if (year <= 2030) break_2030++;
+                        else if (year <= 2035) break_2035++;
+                        else if (year <= 2040) break_2040++;
+                        else if (year <= 2045) break_2045++;
+                    }
+                });
+
+                return {
+                    safe_count: safe.toString(),
+                    transitional_count: transitional.toString(),
+                    unsafe_count: unsafe.toString(),
+                    deprecated_count: deprecated.toString(),
+                    break_2030_count: break_2030.toString(),
+                    break_2035_count: break_2035.toString(),
+                    break_2040_count: break_2040.toString(),
+                    break_2045_count: break_2045.toString()
+                };
+            }
+
+            getCryptoAssets() {
+                return this.components.filter(comp => comp.type === 'cryptographic-asset');
+            }
+
+            getCertificates() {
+                return this.getCryptoAssets().filter(asset => {
+                    const assetType = asset.cryptoProperties?.assetType;
+                    return assetType === 'certificate';
+                });
+            }
+
+            getAlgorithms() {
+                return this.getCryptoAssets().filter(asset => {
+                    const assetType = asset.cryptoProperties?.assetType;
+                    return assetType === 'algorithm';
+                });
+            }
+
+            getPropertyValue(properties, name) {
+                if (!Array.isArray(properties)) return null;
+                const prop = properties.find(p => p.name === name);
+                return prop ? prop.value : null;
+            }
+        }
+
+        /* ===== SVGChart Class ===== */
+        class SVGChart {
+            constructor(containerId, width, height) {
+                this.width = width || 400;
+                this.height = height || 300;
+                this.container = document.getElementById(containerId);
+
+                if (!this.container) {
+                    console.error(`Container ${containerId} not found`);
+                    return;
+                }
+
+                // Create SVG element
+                this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                this.svg.setAttribute('width', this.width);
+                this.svg.setAttribute('height', this.height);
+                this.svg.setAttribute('viewBox', `0 0 ${this.width} ${this.height}`);
+                this.svg.style.display = 'block';
+                this.container.appendChild(this.svg);
+            }
+
+            renderPieChart(data, colors) {
+                if (!this.svg) return;
+
+                // Calculate total
+                const total = data.reduce((sum, item) => sum + parseFloat(item.value), 0);
+                if (total === 0) return;
+
+                let currentAngle = -90; // Start at top
+                const cx = this.width / 2;
+                const cy = this.height / 2;
+                const radius = Math.min(cx, cy) - 20;
+
+                data.forEach((item, index) => {
+                    const percentage = (parseFloat(item.value) / total) * 100;
+                    const angle = (percentage / 100) * 360;
+
+                    // Handle full circle (single category or 100%)
+                    if (percentage >= 99.9) {
+                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        circle.setAttribute('cx', cx);
+                        circle.setAttribute('cy', cy);
+                        circle.setAttribute('r', radius);
+                        circle.setAttribute('fill', colors[index % colors.length]);
+
+                        // Add title for tooltip
+                        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                        title.textContent = `${item.label}: ${item.value} (${percentage.toFixed(1)}%)`;
+                        circle.appendChild(title);
+
+                        this.svg.appendChild(circle);
+                    } else {
+                        // Calculate arc path
+                        const startAngle = currentAngle * (Math.PI / 180);
+                        const endAngle = (currentAngle + angle) * (Math.PI / 180);
+
+                        const x1 = cx + radius * Math.cos(startAngle);
+                        const y1 = cy + radius * Math.sin(startAngle);
+                        const x2 = cx + radius * Math.cos(endAngle);
+                        const y2 = cy + radius * Math.sin(endAngle);
+
+                        const largeArc = angle > 180 ? 1 : 0;
+
+                        const pathData = [
+                            `M ${cx} ${cy}`,
+                            `L ${x1} ${y1}`,
+                            `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                            'Z'
+                        ].join(' ');
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.setAttribute('d', pathData);
+                        path.setAttribute('fill', colors[index % colors.length]);
+                        path.setAttribute('stroke', '#fff');
+                        path.setAttribute('stroke-width', '2');
+
+                        // Add title for tooltip
+                        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                        title.textContent = `${item.label}: ${item.value} (${percentage.toFixed(1)}%)`;
+                        path.appendChild(title);
+
+                        this.svg.appendChild(path);
+                    }
+
+                    currentAngle += angle;
+                });
+            }
+
+            renderBarChart(data, colors) {
+                if (!this.svg) return;
+
+                const maxValue = Math.max(...data.map(item => parseFloat(item.value)));
+                if (maxValue === 0) return;
+
+                const barHeight = 30;
+                const barSpacing = 10;
+                const labelWidth = 100;
+                const padding = 20;
+
+                data.forEach((item, index) => {
+                    const y = padding + index * (barHeight + barSpacing);
+                    const barWidth = ((parseFloat(item.value) / maxValue) * (this.width - labelWidth - padding * 2));
+
+                    // Bar
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect.setAttribute('x', labelWidth);
+                    rect.setAttribute('y', y);
+                    rect.setAttribute('width', barWidth);
+                    rect.setAttribute('height', barHeight);
+                    rect.setAttribute('fill', colors[index % colors.length]);
+                    rect.setAttribute('rx', '5');
+
+                    // Get theme-aware text color
+                    const textColor = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim() || '#2d3748';
+
+                    // Label
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', 5);
+                    text.setAttribute('y', y + barHeight / 2 + 5);
+                    text.setAttribute('font-size', '14');
+                    text.setAttribute('fill', textColor);
+                    text.textContent = item.label;
+
+                    // Value
+                    const valueText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    valueText.setAttribute('x', labelWidth + barWidth + 5);
+                    valueText.setAttribute('y', y + barHeight / 2 + 5);
+                    valueText.setAttribute('font-size', '14');
+                    valueText.setAttribute('font-weight', 'bold');
+                    valueText.setAttribute('fill', textColor);
+                    valueText.textContent = item.value;
+
+                    this.svg.appendChild(rect);
+                    this.svg.appendChild(text);
+                    this.svg.appendChild(valueText);
+                });
+            }
+        }
+
+        /* ===== PQCDashboard Class (Phase 2) ===== */
+        class PQCDashboard {
+            constructor(parser) {
+                this.parser = parser;
+                this.metadata = parser.getPQCMetadata();
+            }
+
+            render(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                try {
+                    const score = this.calculateOverallScore();
+                    const riskLevel = this.getRiskLevel(score);
+                    container.innerHTML = `
+                        ${this.renderHeader(score, riskLevel)}
+                        ${this.renderStatusCards()}
+                        ${this.renderBreakTimelineSection()}
+                        ${this.renderPriorityList()}
+                    `;
+                } catch (error) {
+                    console.error('Dashboard render error:', error);
+                    container.innerHTML = `
+                        <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <h3>Dashboard Rendering Error</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            calculateOverallScore() {
+                const safe = parseInt(this.metadata.safe_count) || 0;
+                const transitional = parseInt(this.metadata.transitional_count) || 0;
+                const unsafe = parseInt(this.metadata.unsafe_count) || 0;
+
+                const total = safe + transitional + unsafe;
+                if (total === 0) return 0;
+
+                // Formula: (safe*100 + transitional*50 + unsafe*0) / total
+                const score = ((safe * 100) + (transitional * 50) + (unsafe * 0)) / total;
+                return Math.round(score);
+            }
+
+            getRiskLevel(score) {
+                if (score >= 80) {
+                    return { label: 'LOW RISK', class: 'risk-low' };
+                } else if (score >= 60) {
+                    return { label: 'MEDIUM RISK', class: 'risk-medium' };
+                } else if (score >= 40) {
+                    return { label: 'HIGH RISK', class: 'risk-high' };
+                } else {
+                    return { label: 'CRITICAL RISK', class: 'risk-critical' };
+                }
+            }
+
+            renderHeader(score, riskLevel) {
+                return `
+                    <div class="dashboard-header">
+                        <h2>PQC Readiness Assessment</h2>
+                        <div class="score-display">${score}/100</div>
+                        <div class="risk-badge ${riskLevel.class}">${riskLevel.label}</div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${score}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderStatusCards() {
+                const safe = parseInt(this.metadata.safe_count) || 0;
+                const transitional = parseInt(this.metadata.transitional_count) || 0;
+                const unsafe = parseInt(this.metadata.unsafe_count) || 0;
+                const total = safe + transitional + unsafe;
+
+                const safePercent = total > 0 ? Math.round((safe / total) * 100) : 0;
+                const transitionalPercent = total > 0 ? Math.round((transitional / total) * 100) : 0;
+                const unsafePercent = total > 0 ? Math.round((unsafe / total) * 100) : 0;
+
+                return `
+                    <div class="status-cards">
+                        <div class="status-card">
+                            <h3>PQC SAFE</h3>
+                            <div class="status-icon">🟢</div>
+                            <div class="status-number status-safe">${safe}</div>
+                            <div class="status-percentage status-safe">${safePercent}%</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>TRANSITIONAL</h3>
+                            <div class="status-icon">🟡</div>
+                            <div class="status-number status-transitional">${transitional}</div>
+                            <div class="status-percentage status-transitional">${transitionalPercent}%</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>UNSAFE</h3>
+                            <div class="status-icon">🔴</div>
+                            <div class="status-number status-unsafe">${unsafe}</div>
+                            <div class="status-percentage status-unsafe">${unsafePercent}%</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderBreakTimelineSection() {
+                return `
+                    <div class="timeline-section">
+                        <h3>Quantum Break Timeline</h3>
+                        <p style="color: var(--color-text-muted); margin-bottom: 20px;">
+                            Estimated years when quantum computers could break these cryptographic assets
+                        </p>
+                        <div class="timeline-chart" id="break-timeline-chart"></div>
+                    </div>
+                `;
+            }
+
+            renderBreakTimeline(containerId) {
+                const data = [
+                    { label: '2030', value: this.metadata.break_2030_count || '0' },
+                    { label: '2035', value: this.metadata.break_2035_count || '0' },
+                    { label: '2040', value: this.metadata.break_2040_count || '0' },
+                    { label: '2045', value: this.metadata.break_2045_count || '0' }
+                ];
+
+                // Filter out zero values
+                const filteredData = data.filter(item => parseInt(item.value) > 0);
+
+                if (filteredData.length === 0) {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = '<p style="color: var(--color-text-muted); text-align: center; padding: 20px;">No break year data available</p>';
+                    }
+                    return;
+                }
+
+                const colors = ['#dc3545', '#fd7e14', '#ffc107', '#28a745'];
+                const chart = new SVGChart(containerId, 600, 200);
+                chart.renderBarChart(filteredData, colors);
+            }
+
+            renderPriorityList() {
+                const break2030 = parseInt(this.metadata.break_2030_count) || 0;
+                const break2035 = parseInt(this.metadata.break_2035_count) || 0;
+                const break2040 = parseInt(this.metadata.break_2040_count) || 0;
+
+                let priorityItems = '';
+
+                if (break2030 > 0) {
+                    priorityItems += `
+                        <div class="priority-item critical">
+                            <span class="priority-icon">🔴</span>
+                            <strong>${break2030}</strong> asset${break2030 !== 1 ? 's' : ''} require <strong>IMMEDIATE action</strong> (break ≤2030)
+                        </div>
+                    `;
+                }
+
+                if (break2035 > 0) {
+                    priorityItems += `
+                        <div class="priority-item high">
+                            <span class="priority-icon">🟠</span>
+                            <strong>${break2035}</strong> asset${break2035 !== 1 ? 's' : ''} need <strong>planning by 2027</strong> (break ≤2035)
+                        </div>
+                    `;
+                }
+
+                if (break2040 > 0) {
+                    priorityItems += `
+                        <div class="priority-item medium">
+                            <span class="priority-icon">🟡</span>
+                            <strong>${break2040}</strong> asset${break2040 !== 1 ? 's' : ''} on <strong>standard timeline</strong> (break ≤2040)
+                        </div>
+                    `;
+                }
+
+                if (!priorityItems) {
+                    priorityItems = '<p style="color: var(--color-text-muted); text-align: center; padding: 20px;">No migration priorities identified</p>';
+                }
+
+                return `
+                    <div class="priority-list">
+                        <h3>Migration Priorities</h3>
+                        ${priorityItems}
+                    </div>
+                `;
+            }
+        }
+
+        /* ===== CertificateHeatmap Class (Phase 3) ===== */
+        class CertificateHeatmap {
+            constructor(parser) {
+                this.parser = parser;
+                this.certs = parser.getCertificates();
+                this.now = new Date();
+            }
+
+            render(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                try {
+                    if (this.certs.length === 0) {
+                        container.innerHTML = `
+                            <div class="welcome-message">
+                                <h2>No Certificates Found</h2>
+                                <p>This CBOM does not contain any certificate assets.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const buckets = this.categorizeCertificates();
+                    const expiringSoon = buckets.next90.concat(buckets.days91_180).sort((a, b) => a.daysUntil - b.daysUntil).slice(0, 10);
+
+                    container.innerHTML = `
+                        <div class="heatmap-header">
+                            <h2>Certificate Expiration Heatmap</h2>
+                            <p>Track certificate lifecycle and expiration timeline</p>
+                        </div>
+                        <div class="heatmap-summary">
+                            <div>Total Certificates</div>
+                            <div class="total-count">${this.certs.length}</div>
+                        </div>
+                        ${this.renderBuckets(buckets)}
+                        ${expiringSoon.length > 0 ? this.renderExpiringSoon(expiringSoon) : ''}
+                    `;
+                } catch (error) {
+                    console.error('CertificateHeatmap render error:', error);
+                    container.innerHTML = `
+                        <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <h3>Heatmap Rendering Error</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            categorizeCertificates() {
+                const buckets = {
+                    expired: [],
+                    next90: [],
+                    days91_180: [],
+                    days181_365: [],
+                    years1_2: [],
+                    years2plus: []
+                };
+
+                this.certs.forEach(cert => {
+                    const notValidAfter = cert.cryptoProperties?.certificateProperties?.notValidAfter;
+                    if (!notValidAfter) {
+                        buckets.years2plus.push({cert, daysUntil: Infinity, expired: false});
+                        return;
+                    }
+
+                    const daysUntil = this.calculateDaysUntil(notValidAfter);
+                    const certData = {cert, daysUntil, expired: daysUntil < 0};
+
+                    if (daysUntil < 0) {
+                        buckets.expired.push(certData);
+                    } else if (daysUntil <= 90) {
+                        buckets.next90.push(certData);
+                    } else if (daysUntil <= 180) {
+                        buckets.days91_180.push(certData);
+                    } else if (daysUntil <= 365) {
+                        buckets.days181_365.push(certData);
+                    } else if (daysUntil <= 730) {
+                        buckets.years1_2.push(certData);
+                    } else {
+                        buckets.years2plus.push(certData);
+                    }
+                });
+
+                return buckets;
+            }
+
+            calculateDaysUntil(dateString) {
+                try {
+                    const expDate = new Date(dateString);
+                    if (isNaN(expDate.getTime())) {
+                        return Infinity;
+                    }
+                    const diffMs = expDate - this.now;
+                    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                } catch (e) {
+                    return Infinity;
+                }
+            }
+
+            renderBuckets(buckets) {
+                const total = this.certs.length;
+                const bucketConfig = [
+                    {key: 'expired', label: 'EXPIRED', class: 'expired'},
+                    {key: 'next90', label: 'Next 90 Days', class: 'critical'},
+                    {key: 'days91_180', label: '91-180 Days', class: 'warning'},
+                    {key: 'days181_365', label: '181-365 Days', class: 'caution'},
+                    {key: 'years1_2', label: '1-2 Years', class: 'good'},
+                    {key: 'years2plus', label: '2+ Years', class: 'excellent'}
+                ];
+
+                let html = '<div class="heatmap-buckets"><h3>Expiration Distribution</h3>';
+
+                bucketConfig.forEach(config => {
+                    const count = buckets[config.key].length;
+                    const percentage = total > 0 ? (count / total * 100) : 0;
+
+                    html += `
+                        <div class="bucket-row">
+                            <div class="bucket-label">${config.label}:</div>
+                            <div class="bucket-bar-container">
+                                <div class="bucket-bar ${config.class}" style="width: ${percentage}%">
+                                    ${percentage > 10 ? percentage.toFixed(0) + '%' : ''}
+                                </div>
+                            </div>
+                            <div class="bucket-count">${count} cert${count !== 1 ? 's' : ''}</div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                return html;
+            }
+
+            renderExpiringSoon(certs) {
+                if (certs.length === 0) return '';
+
+                let html = `
+                    <div class="expiring-soon">
+                        <h3>⚠️ Expiring Soon (&lt; 180 days)</h3>
+                        <div class="cert-list">
+                `;
+
+                certs.forEach(certData => {
+                    const cert = certData.cert;
+                    const daysUntil = certData.daysUntil;
+                    const cn = this.extractCN(cert);
+                    const algorithm = this.getAlgorithmInfo(cert);
+
+                    const urgencyClass = daysUntil <= 30 ? 'critical' : daysUntil <= 90 ? 'warning' : '';
+                    const daysClass = daysUntil <= 30 ? 'critical' : daysUntil <= 90 ? 'warning' : '';
+
+                    html += `
+                        <div class="cert-item ${urgencyClass}">
+                            <div>
+                                <span class="cert-name">${cn}</span>
+                                <span class="cert-days ${daysClass}">(${daysUntil} days)</span>
+                            </div>
+                            <div class="cert-algorithm">${algorithm}</div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+                return html;
+            }
+
+            extractCN(cert) {
+                const subjectName = cert.cryptoProperties?.certificateProperties?.subjectName;
+                if (!subjectName) return 'Unknown Certificate';
+
+                // Try to extract CN from DN (e.g., "CN=example.com, O=Org, ...")
+                const cnMatch = subjectName.match(/CN=([^,]+)/);
+                if (cnMatch) {
+                    return cnMatch[1].trim();
+                }
+
+                // Fallback: use cert name or first part of subject
+                return cert.name || subjectName.split(',')[0] || 'Unknown';
+            }
+
+            getAlgorithmInfo(cert) {
+                // Try to get algorithm from certificate properties
+                const sigAlg = cert.cryptoProperties?.certificateProperties?.signatureAlgorithm;
+                if (sigAlg) return sigAlg;
+
+                // Try to get from component properties
+                const props = cert.properties || [];
+                const algProp = this.parser.getPropertyValue(props, 'cbom:cert:signature_algorithm');
+                if (algProp) return algProp;
+
+                // Fallback
+                return 'Unknown Algorithm';
+            }
+        }
+
+        /* ===== AlgorithmAnalysis Class (Phase 4) ===== */
+        class AlgorithmAnalysis {
+            constructor(parser) {
+                this.parser = parser;
+                this.algorithms = parser.getAlgorithms();
+            }
+
+            render(containerId) {
+                console.log('[AlgorithmAnalysis] Rendering to container:', containerId);
+
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('[AlgorithmAnalysis] Container not found:', containerId);
+                    return;
+                }
+
+                try {
+                    if (this.algorithms.length === 0) {
+                        container.innerHTML = `
+                            <div class="no-data-message">
+                                <h2>No Algorithms Found</h2>
+                                <p>This CBOM does not contain any algorithm assets.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const typeData = this.groupByType();
+                    const rsaData = this.groupByKeySize();
+                    const topAlgos = this.getTopAlgorithms(10);
+
+                    container.innerHTML = `
+                        <div class="algo-header">
+                            <h2>Algorithm Distribution Analysis</h2>
+                            <p>Analyze cryptographic algorithm usage and key sizes</p>
+                        </div>
+                        <div class="charts-row">
+                            <div class="chart-container">
+                                <h3>By Primitive Type</h3>
+                                <div class="chart-area" id="primitive-chart"></div>
+                                ${this.renderLegend(typeData)}
+                            </div>
+                            <div class="chart-container">
+                                <h3>RSA Key Sizes</h3>
+                                <div class="chart-area" id="rsa-chart"></div>
+                            </div>
+                        </div>
+                        <div class="top-algorithms">
+                            <h3>Most Common Algorithms</h3>
+                            ${this.renderTopAlgorithms(topAlgos)}
+                        </div>
+                    `;
+
+                    console.log('[AlgorithmAnalysis] Rendered successfully');
+                } catch (error) {
+                    console.error('[AlgorithmAnalysis] Error during render:', error);
+                    container.innerHTML = `
+                        <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <h3>Algorithm Analysis Error</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            groupByType() {
+                const typeCount = {};
+
+                this.algorithms.forEach(algo => {
+                    let primitive = algo.cryptoProperties?.algorithmProperties?.primitive || 'unknown';
+                    primitive = this.formatPrimitive(primitive);
+                    typeCount[primitive] = (typeCount[primitive] || 0) + 1;
+                });
+
+                return Object.entries(typeCount)
+                    .map(([label, value]) => ({label, value}))
+                    .sort((a, b) => b.value - a.value);
+            }
+
+            formatPrimitive(type) {
+                const mapping = {
+                    'ae': 'Auth. Encryption',
+                    'signature': 'Signature',
+                    'hash': 'Hash',
+                    'block-cipher': 'Block Cipher',
+                    'stream-cipher': 'Stream Cipher',
+                    'kdf': 'Key Derivation',
+                    'key-agree': 'Key Agreement',
+                    'kem': 'Key Encapsulation',
+                    'mac': 'MAC',
+                    'pke': 'Public Key Enc.',
+                    'unknown': 'Unknown'
+                };
+                return mapping[type] || type;
+            }
+
+            groupByKeySize() {
+                const keySizes = {'RSA-1024': 0, 'RSA-2048': 0, 'RSA-3072': 0, 'RSA-4096': 0};
+
+                this.algorithms.forEach(algo => {
+                    const name = algo.name || '';
+                    const keySize = this.extractKeySize(name);
+
+                    if (keySize && keySizes.hasOwnProperty(`RSA-${keySize}`)) {
+                        keySizes[`RSA-${keySize}`]++;
+                    } else if (name.toLowerCase().includes('rsa') && !name.match(/\d{3,4}/)) {
+                        // Default RSA without size to 2048
+                        keySizes['RSA-2048']++;
+                    }
+                });
+
+                return Object.entries(keySizes)
+                    .map(([label, value]) => ({label, value}))
+                    .filter(item => item.value > 0);
+            }
+
+            extractKeySize(name) {
+                const match = name.match(/(\d{3,4})/);
+                if (match) {
+                    const size = parseInt(match[1]);
+                    if ([1024, 2048, 3072, 4096].includes(size)) {
+                        return size;
+                    }
+                }
+                return null;
+            }
+
+            getTopAlgorithms(n) {
+                const algoCount = {};
+
+                this.algorithms.forEach(algo => {
+                    const name = algo.name || 'Unknown';
+                    algoCount[name] = (algoCount[name] || 0) + 1;
+                });
+
+                return Object.entries(algoCount)
+                    .map(([name, count]) => ({name, count}))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, n);
+            }
+
+            renderPrimitiveChart(containerId) {
+                const data = this.groupByType();
+                if (data.length === 0) {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = '<p style="color: var(--color-text-muted);">No primitive data available</p>';
+                    }
+                    return;
+                }
+
+                const colors = ['#667eea', '#764ba2', '#28a745', '#ffc107', '#fd7e14', '#dc3545', '#17a2b8', '#6c757d'];
+                const chart = new SVGChart(containerId, 280, 250);
+                chart.renderPieChart(data, colors);
+            }
+
+            renderRSAChart(containerId) {
+                const data = this.groupByKeySize();
+                if (data.length === 0) {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">No RSA algorithms detected</p>';
+                    }
+                    return;
+                }
+
+                // Color by security: 1024=red, 2048=orange, 3072=yellow, 4096=green
+                const colors = data.map(item => {
+                    if (item.label.includes('1024')) return '#dc3545';
+                    if (item.label.includes('2048')) return '#fd7e14';
+                    if (item.label.includes('3072')) return '#ffc107';
+                    if (item.label.includes('4096')) return '#28a745';
+                    return '#667eea';
+                });
+
+                const chart = new SVGChart(containerId, 350, 200);
+                chart.renderBarChart(data, colors);
+            }
+
+            renderLegend(data) {
+                const colors = ['#667eea', '#764ba2', '#28a745', '#ffc107', '#fd7e14', '#dc3545', '#17a2b8', '#6c757d'];
+                const total = data.reduce((sum, item) => sum + item.value, 0);
+
+                let html = '<div class="chart-legend">';
+                data.forEach((item, index) => {
+                    const percentage = total > 0 ? ((item.value / total) * 100).toFixed(0) : 0;
+                    html += `
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: ${colors[index % colors.length]}"></div>
+                            <span>${item.label}: ${item.value} (${percentage}%)</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                return html;
+            }
+
+            renderTopAlgorithms(algorithms) {
+                if (algorithms.length === 0) {
+                    return '<p style="color: var(--color-text-muted);">No algorithm data available</p>';
+                }
+
+                const total = algorithms.reduce((sum, algo) => sum + algo.count, 0);
+                const maxCount = algorithms[0].count;
+
+                let html = '<div class="algo-list">';
+
+                algorithms.forEach((algo, index) => {
+                    const percentage = total > 0 ? ((algo.count / total) * 100).toFixed(0) : 0;
+                    const barWidth = maxCount > 0 ? ((algo.count / maxCount) * 100) : 0;
+
+                    html += `
+                        <div class="algo-item">
+                            <div class="algo-rank">${index + 1}</div>
+                            <div class="algo-name">${algo.name}</div>
+                            <div class="algo-bar-container">
+                                <div class="algo-bar" style="width: ${barWidth}%"></div>
+                            </div>
+                            <div class="algo-count">${algo.count}</div>
+                            <div class="algo-percentage">${percentage}%</div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                return html;
+            }
+        }
+
+        /* ===== LibraryDashboard Class ===== */
+        class LibraryDashboard {
+            constructor(parser) {
+                this.parser = parser;
+                this.libraries = this.getLibraries();
+            }
+
+            getLibraries() {
+                return this.parser.components.filter(comp => {
+                    const type = comp.type || '';
+                    const bomRef = comp['bom-ref'] || '';
+                    return type === 'library' || bomRef.startsWith('library:');
+                });
+            }
+
+            getPropertyValue(properties, propName) {
+                const prop = (properties || []).find(p => p.name === propName);
+                return prop ? prop.value : null;
+            }
+
+            groupByCryptoFamily() {
+                const familyCount = {};
+
+                this.libraries.forEach(lib => {
+                    const props = lib.properties || [];
+                    const familyName = this.getPropertyValue(props, 'cbom:lib:name') || 'unknown';
+                    familyCount[familyName] = (familyCount[familyName] || 0) + 1;
+                });
+
+                return Object.entries(familyCount)
+                    .map(([label, value]) => ({label, value}))
+                    .sort((a, b) => b.value - a.value);
+            }
+
+            getEmbeddedProviders() {
+                return this.libraries.filter(lib => {
+                    const props = lib.properties || [];
+                    return this.getPropertyValue(props, 'cbom:lib:embedded_provider') === 'true';
+                });
+            }
+
+            getImplementedAlgorithms() {
+                const algoCount = {};
+
+                this.libraries.forEach(lib => {
+                    const props = lib.properties || [];
+                    props.forEach(prop => {
+                        if (prop.name === 'cbom:lib:implements') {
+                            algoCount[prop.value] = (algoCount[prop.value] || 0) + 1;
+                        }
+                    });
+                });
+
+                return Object.entries(algoCount)
+                    .map(([label, value]) => ({label, value}))
+                    .sort((a, b) => b.value - a.value);
+            }
+
+            render(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const embedded = this.getEmbeddedProviders();
+                const families = this.groupByCryptoFamily();
+                const topAlgorithms = this.getImplementedAlgorithms().slice(0, 15);
+
+                container.innerHTML = `
+                    <div class="lib-header">
+                        <h2>Cryptographic Libraries Inventory</h2>
+                        <p>Analysis of crypto libraries and embedded providers</p>
+                    </div>
+
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Libraries</div>
+                            <div class="stat-value">${this.libraries.length}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Embedded Providers</div>
+                            <div class="stat-value" style="color: #8e24aa;">${embedded.length}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Crypto Families</div>
+                            <div class="stat-value">${families.length}</div>
+                        </div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <h3>By Crypto Family</h3>
+                            <div class="chart-area" id="family-chart"></div>
+                            ${this.renderFamilyLegend(families)}
+                        </div>
+                        <div class="chart-container">
+                            <h3>Embedded Providers</h3>
+                            ${this.renderEmbeddedProviders(embedded)}
+                        </div>
+                    </div>
+
+                    <div class="top-algorithms">
+                        <h3>Implemented Algorithms (${topAlgorithms.length} unique)</h3>
+                        ${this.renderAlgorithmList(topAlgorithms)}
+                    </div>
+                `;
+
+                // Render charts
+                this.renderFamilyChart(families);
+            }
+
+            renderFamilyChart(data) {
+                if (data.length === 0) return;
+
+                const colors = ['#1976d2', '#c2185b', '#00695c', '#8e24aa', '#d84315', '#5d4037', '#455a64'];
+                const chart = new SVGChart('family-chart', 400, 300);
+                chart.renderPieChart(data, colors);
+            }
+
+            renderFamilyLegend(data) {
+                return `
+                    <div class="chart-legend">
+                        ${data.map(item => `
+                            <div class="legend-item">
+                                <span class="legend-label">${item.label}</span>
+                                <span class="legend-value">${item.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            renderEmbeddedProviders(embedded) {
+                if (embedded.length === 0) {
+                    return '<p style="color: #666; padding: 20px;">No embedded crypto providers detected.</p>';
+                }
+
+                return `
+                    <div class="embedded-list">
+                        ${embedded.map(lib => {
+                            const props = lib.properties || [];
+                            const name = lib.name || 'Unknown';
+                            const version = this.getPropertyValue(props, 'cbom:lib:version') || 'N/A';
+                            const algoCount = props.filter(p => p.name === 'cbom:lib:implements').length;
+
+                            return `
+                                <div class="embedded-provider-card" style="background: #f3e5f5; border-left: 3px solid #8e24aa; padding: 12px; margin-bottom: 10px; border-radius: 4px;">
+                                    <div style="font-weight: 600; color: #6a1b9a;">${name}</div>
+                                    <div style="font-size: 0.9em; color: #666; margin-top: 4px;">
+                                        Version: ${version} | Implements: ${algoCount} algorithms
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+
+            renderAlgorithmList(topAlgorithms) {
+                if (topAlgorithms.length === 0) {
+                    return '<p style="color: #666;">No algorithm implementations found.</p>';
+                }
+
+                return `
+                    <div class="algo-list">
+                        ${topAlgorithms.map((item, index) => `
+                            <div class="algo-item">
+                                <span class="algo-rank">${index + 1}</span>
+                                <span class="algo-name">${item.label}</span>
+                                <span class="algo-count">${item.value} ${item.value === 1 ? 'library' : 'libraries'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        /* ===== Phase 5: MigrationTimeline Class ===== */
+        class MigrationTimeline {
+            constructor(parser) {
+                this.parser = parser;
+                this.metadata = parser.getPQCMetadata();
+                this.currentYear = new Date().getFullYear();
+            }
+
+            render(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('[MigrationTimeline] Container not found:', containerId);
+                    return;
+                }
+
+                console.log('[MigrationTimeline] Rendering timeline...');
+
+                try {
+                    const milestones = this.generateMilestones();
+
+                    container.innerHTML = `
+                        <div class="timeline-header">
+                            <h2>PQC Migration Timeline</h2>
+                            <p>Plan your post-quantum cryptography transition</p>
+                        </div>
+
+                        <div class="timeline-viz-container">
+                            <h3>Timeline Overview</h3>
+                            <div id="timeline-svg-container"></div>
+                        </div>
+
+                        <div class="milestones-section">
+                            <h3>Key Milestones</h3>
+                            ${this.renderMilestones(milestones)}
+                        </div>
+
+                        <div class="migration-waves">
+                            ${this.renderMigrationWaves()}
+                        </div>
+                    `;
+
+                    console.log('[MigrationTimeline] Rendered successfully');
+                } catch (error) {
+                    console.error('[MigrationTimeline] Error during render:', error);
+                    container.innerHTML = `
+                        <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <h3>Migration Timeline Error</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            generateMilestones() {
+                return [
+                    {
+                        year: this.currentYear,
+                        phase: "Discovery Complete",
+                        status: "complete",
+                        description: "Cryptographic inventory generated with CBOM",
+                        icon: "✅"
+                    },
+                    {
+                        year: this.currentYear + 1,
+                        phase: "Vendor Assessment",
+                        status: "pending",
+                        description: "Evaluate vendor PQC readiness and migration plans",
+                        icon: "📋"
+                    },
+                    {
+                        year: this.currentYear + 2,
+                        phase: "Pilot Deployment",
+                        status: "pending",
+                        description: "Test PQC algorithms in non-production environments",
+                        icon: "🧪"
+                    },
+                    {
+                        year: 2030,
+                        phase: "RSA-1024 Break Risk",
+                        status: "critical",
+                        description: "All RSA-1024 must be migrated before this date",
+                        icon: "⚠️"
+                    },
+                    {
+                        year: 2035,
+                        phase: "NSA CNSA 2.0 Deadline",
+                        status: "critical",
+                        description: "Federal compliance deadline for PQC transition",
+                        icon: "🏛️"
+                    }
+                ];
+            }
+
+            renderTimelineViz(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const milestones = this.generateMilestones();
+                const startYear = this.currentYear;
+                const endYear = 2036;
+                const totalYears = endYear - startYear;
+
+                const width = 900;
+                const height = 120;
+                const padding = 50;
+                const lineY = 60;
+
+                let svg = `<svg class="timeline-svg" viewBox="0 0 ${width} ${height}">`;
+
+                // Draw main axis line
+                svg += `<line x1="${padding}" y1="${lineY}" x2="${width - padding}" y2="${lineY}"
+                        stroke="#e2e8f0" stroke-width="3"/>`;
+
+                // Draw year markers and milestone circles
+                for (let year = startYear; year <= endYear; year++) {
+                    const x = padding + ((year - startYear) / totalYears) * (width - 2 * padding);
+
+                    // Year tick
+                    svg += `<line x1="${x}" y1="${lineY - 5}" x2="${x}" y2="${lineY + 5}"
+                            stroke="#cbd5e0" stroke-width="2"/>`;
+
+                    // Year label (every 2 years to avoid crowding)
+                    if (year % 2 === 0 || year === startYear) {
+                        svg += `<text x="${x}" y="${lineY + 25}" text-anchor="middle"
+                                font-size="12" fill="#718096">${year}</text>`;
+                    }
+
+                    // Draw milestone circle if exists
+                    const milestone = milestones.find(m => m.year === year);
+                    if (milestone) {
+                        let color = '#667eea'; // pending
+                        if (milestone.status === 'complete') color = '#28a745';
+                        if (milestone.status === 'critical') color = '#dc3545';
+
+                        svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="${color}"/>`;
+
+                        // Add small icon above
+                        svg += `<text x="${x}" y="${lineY - 20}" text-anchor="middle"
+                                font-size="14">${milestone.icon}</text>`;
+                    }
+                }
+
+                svg += '</svg>';
+                container.innerHTML = svg;
+            }
+
+            renderMilestones(milestones) {
+                if (milestones.length === 0) {
+                    return '<p style="color: var(--color-text-muted);">No milestone data available</p>';
+                }
+
+                let html = '<div class="milestone-list">';
+
+                milestones.forEach(milestone => {
+                    html += `
+                        <div class="milestone-item ${milestone.status}">
+                            <div class="milestone-year">${milestone.year}</div>
+                            <div class="milestone-icon">${milestone.icon}</div>
+                            <div class="milestone-content">
+                                <div class="milestone-phase">${milestone.phase}</div>
+                                <div class="milestone-description">${milestone.description}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                return html;
+            }
+
+            renderMigrationWaves() {
+                const break2030 = parseInt(this.metadata.break_2030_count) || 0;
+                const break2035 = parseInt(this.metadata.break_2035_count) || 0;
+                const break2040 = parseInt(this.metadata.break_2040_count) || 0;
+                const break2045 = parseInt(this.metadata.break_2045_count) || 0;
+
+                const wave1 = break2030;
+                const wave2 = break2035;
+                const wave3 = break2040 + break2045;
+
+                return `
+                    <div class="wave-card wave-critical">
+                        <div class="wave-title">Wave 1: Critical</div>
+                        <div class="wave-period">2025-2030</div>
+                        <div class="wave-count">${wave1}</div>
+                        <div class="wave-label">assets</div>
+                        <div class="wave-description">
+                            Require IMMEDIATE action<br>
+                            Break estimate ≤2030
+                        </div>
+                    </div>
+
+                    <div class="wave-card wave-standard">
+                        <div class="wave-title">Wave 2: Standard</div>
+                        <div class="wave-period">2030-2035</div>
+                        <div class="wave-count">${wave2}</div>
+                        <div class="wave-label">assets</div>
+                        <div class="wave-description">
+                            Need planning by 2027<br>
+                            Break estimate ≤2035
+                        </div>
+                    </div>
+
+                    <div class="wave-card wave-longterm">
+                        <div class="wave-title">Wave 3: Long-term</div>
+                        <div class="wave-period">2035+</div>
+                        <div class="wave-count">${wave3}</div>
+                        <div class="wave-label">assets</div>
+                        <div class="wave-description">
+                            Standard timeline<br>
+                            Break estimate >2035
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        /* ===== Phase 6: CBOMExplorer Class ===== */
+        class CBOMExplorer {
+            constructor(parser) {
+                this.parser = parser;
+                this.components = parser.components;
+                this.currentPage = 1;
+                this.pageSize = 21;
+                this.filterType = 'all';
+                this.searchTerm = '';
+            }
+
+            getPropertyValue(properties, propName) {
+                const prop = (properties || []).find(p => p.name === propName);
+                return prop ? prop.value : null;
+            }
+
+            render(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('[Explorer] Container not found:', containerId);
+                    return;
+                }
+
+                console.log('[Explorer] Rendering explorer...');
+
+                try {
+                    const filtered = this.getFilteredComponents();
+                    const totalPages = Math.ceil(filtered.length / this.pageSize);
+
+                    container.innerHTML = `
+                        <div class="explorer-header">
+                            <h2>Interactive CBOM Explorer</h2>
+                            <p>Search, filter, and export cryptographic components</p>
+                        </div>
+
+                        <div class="explorer-controls">
+                            <input type="text" id="explorer-search" placeholder="Search by name or bom-ref..."
+                                   value="${this.searchTerm}" onkeyup="window.cbomExplorer.handleSearch(event)">
+                            <select id="explorer-filter" onchange="window.cbomExplorer.handleFilter(event)">
+                                <option value="all" ${this.filterType === 'all' ? 'selected' : ''}>All Types</option>
+                                <option value="certificate" ${this.filterType === 'certificate' ? 'selected' : ''}>Certificates</option>
+                                <option value="algorithm" ${this.filterType === 'algorithm' ? 'selected' : ''}>Algorithms</option>
+                                <option value="related-crypto-material" ${this.filterType === 'related-crypto-material' ? 'selected' : ''}>Keys</option>
+                                <option value="protocol" ${this.filterType === 'protocol' ? 'selected' : ''}>Protocols</option>
+                                <option value="application" ${this.filterType === 'application' ? 'selected' : ''}>Applications</option>
+                                <option value="library" ${this.filterType === 'library' ? 'selected' : ''}>Libraries</option>
+                            </select>
+                            <button onclick="window.cbomExplorer.exportFiltered()">📥 Export Filtered</button>
+                        </div>
+
+                        <div class="explorer-stats">
+                            Showing ${filtered.length} of ${this.components.length} components
+                            ${this.searchTerm ? ` matching "${this.searchTerm}"` : ''}
+                            ${this.filterType !== 'all' ? ` (type: ${this.filterType})` : ''}
+                        </div>
+
+                        <div class="components-grid" id="components-list">
+                            ${this.renderComponentsList(filtered)}
+                        </div>
+
+                        ${this.renderPagination(filtered.length, totalPages)}
+                    `;
+
+                    console.log('[Explorer] Rendered successfully');
+                } catch (error) {
+                    console.error('[Explorer] Error during render:', error);
+                    container.innerHTML = `
+                        <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <h3>Explorer Error</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            renderComponentsList(filtered) {
+                if (filtered.length === 0) {
+                    return '<p class="no-results">No components match your filters</p>';
+                }
+
+                const start = (this.currentPage - 1) * this.pageSize;
+                const end = start + this.pageSize;
+                const page = filtered.slice(start, end);
+
+                return page.map(comp => this.renderComponent(comp)).join('');
+            }
+
+            renderComponent(comp) {
+                const bomRef = comp['bom-ref'] || 'unknown';
+                const name = comp.name || 'Unnamed Component';
+                const assetType = this.getEffectiveAssetType(comp);
+                const pqcStatus = this.getPQCStatus(comp);
+                const breakYear = this.getBreakYear(comp);
+                const expiration = this.getExpiration(comp);
+
+                // Determine type badge class
+                let typeClass = 'other';
+                if (assetType === 'certificate') typeClass = 'certificate';
+                else if (assetType === 'algorithm') typeClass = 'algorithm';
+                else if (assetType === 'related-crypto-material') typeClass = 'key';
+                else if (assetType === 'protocol') typeClass = 'protocol';
+                else if (assetType === 'application') typeClass = 'application';
+                else if (assetType === 'library') typeClass = 'library';
+
+                let pqcHtml = '';
+                if (pqcStatus) {
+                    let pqcClass = 'pqc-unsafe';
+                    if (pqcStatus === 'SAFE') pqcClass = 'pqc-safe';
+                    else if (pqcStatus === 'TRANSITIONAL') pqcClass = 'pqc-transitional';
+
+                    pqcHtml = `
+                        <div class="component-pqc ${pqcClass}">
+                            PQC: ${pqcStatus}${breakYear ? ` (Break: ${breakYear})` : ''}
+                        </div>
+                    `;
+                }
+
+                // Confidence badge (new feature)
+                const confidence = this.getPropertyValue(comp.properties, 'cbom:ctx:confidence');
+                let confidenceHtml = '';
+                if (confidence && parseFloat(confidence) < 1.0) {
+                    const confValue = parseFloat(confidence);
+                    let confClass = 'conf-medium';
+                    let confLabel = 'Medium';
+                    if (confValue >= 0.95) {
+                        confClass = 'conf-high';
+                        confLabel = 'High';
+                    } else if (confValue < 0.90) {
+                        confClass = 'conf-low';
+                        confLabel = 'Lower';
+                    }
+
+                    confidenceHtml = `
+                        <div class="component-confidence ${confClass}" style="font-size: 0.85em; color: #666; margin-top: 4px;">
+                            Confidence: ${confidence} (${confLabel})
+                        </div>
+                    `;
+                }
+
+                let expirationHtml = '';
+                if (expiration) {
+                    let expClass = '';
+                    let expText = '';
+
+                    if (expiration.isNA) {
+                        expClass = 'na';
+                        const subtypeText = expiration.subtype ? ` (${expiration.subtype})` : '';
+                        expText = `Expiry: N/A${subtypeText}`;
+                    } else if (expiration.isExpired) {
+                        expClass = 'expired';
+                        expText = `Expired (${expiration.formatted})`;
+                    } else if (expiration.isExpiringSoon) {
+                        expClass = 'expiring-soon';
+                        expText = `Expires: ${expiration.formatted} ⚠️`;
+                    } else {
+                        expText = `Expires: ${expiration.formatted}`;
+                    }
+
+                    expirationHtml = `
+                        <div class="component-expiration ${expClass}">
+                            ${expText}
+                        </div>
+                    `;
+                }
+
+                const depCount = this.getDependencyCount(bomRef);
+                const depsButtonHtml = depCount > 0
+                    ? `<button onclick="showDependencies('${bomRef.replace(/'/g, "\\'")}')">Relationships (${depCount})</button>`
+                    : '';
+
+                return `
+                    <div class="component-card">
+                        <div class="component-header">
+                            <span class="component-ref" title="${bomRef}">${bomRef}</span>
+                            <span class="component-type-badge ${typeClass}">${assetType}</span>
+                        </div>
+                        <div class="component-name">${name}</div>
+                        ${pqcHtml}
+                        ${expirationHtml}
+                        ${confidenceHtml}
+                        <div class="component-actions">
+                            <button onclick="showComponentDetails('${bomRef.replace(/'/g, "\\'")}')">View Details</button>
+                            ${depsButtonHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            getFilteredComponents() {
+                let filtered = this.components;
+
+                // Apply type filter
+                if (this.filterType !== 'all') {
+                    filtered = filtered.filter(comp => {
+                        const effectiveType = this.getEffectiveAssetType(comp);
+                        return effectiveType === this.filterType;
+                    });
+                }
+
+                // Apply search filter
+                if (this.searchTerm) {
+                    const term = this.searchTerm.toLowerCase();
+                    filtered = filtered.filter(comp => {
+                        const name = (comp.name || '').toLowerCase();
+                        const bomRef = (comp['bom-ref'] || '').toLowerCase();
+                        return name.includes(term) || bomRef.includes(term);
+                    });
+                }
+
+                return filtered;
+            }
+
+            getEffectiveAssetType(comp) {
+                const bomRef = comp['bom-ref'] || '';
+
+                // Check bom-ref prefix first (most reliable)
+                if (bomRef.startsWith('protocol:')) return 'protocol';
+                if (bomRef.startsWith('app:')) return 'application';  // v1.5: applications
+                if (bomRef.startsWith('algo:')) return 'algorithm';
+                if (bomRef.startsWith('cert:')) return 'certificate';
+                if (bomRef.startsWith('key:')) return 'related-crypto-material';
+                if (bomRef.startsWith('library:')) return 'library';
+
+                // Check CycloneDX component type (v1.5: standard field)
+                if (comp.type === 'application') return 'application';
+                if (comp.type === 'library') return 'library';
+
+                // Check cbom:asset:type property
+                const props = comp.properties || [];
+                const assetTypeProp = props.find(p => p.name === 'cbom:asset:type');
+                if (assetTypeProp) return assetTypeProp.value;
+
+                // Fall back to cryptoProperties.assetType
+                return comp.cryptoProperties?.assetType || 'other';
+            }
+
+            getPQCStatus(comp) {
+                const props = comp.properties || [];
+                const statusProp = props.find(p => p.name === 'cbom:pqc:status');
+                return statusProp ? statusProp.value : null;
+            }
+
+            getBreakYear(comp) {
+                const props = comp.properties || [];
+                const breakProp = props.find(p => p.name === 'cbom:pqc:break_estimate');
+                return breakProp ? breakProp.value : null;
+            }
+
+            getExpiration(comp) {
+                // Check cryptoProperties first
+                let notValidAfter = comp.cryptoProperties?.certificateProperties?.notValidAfter;
+
+                // Fallback to properties array
+                if (!notValidAfter && comp.properties) {
+                    const expProp = comp.properties.find(p =>
+                        p.name === 'cbom:cert:not_valid_after' ||
+                        p.name === 'cbom:cert:notValidAfter'
+                    );
+                    if (expProp) notValidAfter = expProp.value;
+                }
+
+                // Detect asset subtype for N/A clarification
+                const assetType = comp.cryptoProperties?.assetType;
+                if (!notValidAfter && assetType === 'certificate') {
+                    // Check if it's a CSR or key
+                    const props = comp.properties || [];
+                    const csrProp = props.find(p => p.name === 'cbom:csr:type');
+                    const name = comp.name || '';
+
+                    let subtype = '';
+                    if (csrProp || name.includes('/csr/') || name.includes('_csr-')) {
+                        subtype = 'CSR';
+                    } else if (name.includes('/keys/') || name.includes('_key-') || name.includes('.key')) {
+                        subtype = 'Key';
+                    }
+
+                    return {
+                        formatted: 'N/A',
+                        isNA: true,
+                        subtype: subtype
+                    };
+                }
+
+                if (!notValidAfter) return null;
+
+                try {
+                    const expDate = new Date(notValidAfter);
+                    if (isNaN(expDate.getTime())) return null;
+
+                    const now = new Date();
+                    const daysUntil = Math.floor((expDate - now) / (1000 * 60 * 60 * 24));
+                    const isExpired = daysUntil < 0;
+                    const isExpiringSoon = !isExpired && daysUntil <= 90;
+
+                    return {
+                        formatted: expDate.toISOString().split('T')[0],
+                        isExpired: isExpired,
+                        isExpiringSoon: isExpiringSoon
+                    };
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            getDependencyCount(bomRef) {
+                const dependencies = this.parser.dependencies || [];
+                const deps = dependencies.find(d => d.ref === bomRef);
+                const dependsOnCount = deps && deps.dependsOn ? deps.dependsOn.length : 0;
+                const providesCount = deps && deps.provides ? deps.provides.length : 0;
+
+                // NEW: Count reverse relationships (what depends on this component)
+                const incoming = dependencies.filter(d =>
+                    (d.dependsOn && d.dependsOn.includes(bomRef)) ||
+                    (d.provides && d.provides.includes(bomRef))
+                );
+                const incomingCount = incoming.length;
+
+                return dependsOnCount + providesCount + incomingCount;
+            }
+
+            // Phase 4: Get provides count for a component
+            getProvidesCount(bomRef) {
+                const dependencies = this.parser.dependencies || [];
+                const deps = dependencies.find(d => d.ref === bomRef);
+                return deps && deps.provides ? deps.provides.length : 0;
+            }
+
+            renderPagination(total, totalPages) {
+                if (totalPages <= 1) return '';
+
+                const prevDisabled = this.currentPage === 1 ? 'disabled' : '';
+                const nextDisabled = this.currentPage === totalPages ? 'disabled' : '';
+
+                return `
+                    <div class="pagination">
+                        <button ${prevDisabled} onclick="goToPage(${this.currentPage - 1})">← Previous</button>
+                        <span class="page-info">Page ${this.currentPage} of ${totalPages}</span>
+                        <button ${nextDisabled} onclick="goToPage(${this.currentPage + 1})">Next →</button>
+                    </div>
+                `;
+            }
+
+            handleSearch(event) {
+                // Debounce search
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.searchTerm = event.target.value;
+                    this.currentPage = 1;
+                    this.render('explorer-content');
+                }, 300);
+            }
+
+            handleFilter(event) {
+                this.filterType = event.target.value;
+                this.currentPage = 1;
+                this.render('explorer-content');
+            }
+
+            exportFiltered() {
+                const filtered = this.getFilteredComponents();
+
+                const exportBom = {
+                    bomFormat: "CycloneDX",
+                    specVersion: this.parser.bom.specVersion,
+                    version: 1,
+                    metadata: {
+                        timestamp: new Date().toISOString(),
+                        properties: [
+                            {name: "export:filtered", value: "true"},
+                            {name: "export:count", value: String(filtered.length)},
+                            {name: "export:filter_type", value: this.filterType},
+                            {name: "export:search_term", value: this.searchTerm || ""}
+                        ]
+                    },
+                    components: filtered
+                };
+
+                const blob = new Blob([JSON.stringify(exportBom, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cbom-filtered-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                console.log('[Explorer] Exported', filtered.length, 'components');
+            }
+        }
+
+        /* ===== Executive Summary Class ===== */
+        class ExecutiveSummary {
+            constructor(parser) {
+                this.parser = parser;
+                this.metadata = parser.getPQCMetadata();
+                this.components = parser.components;
+                this.certificates = parser.getCertificates();
+                this.algorithms = parser.getAlgorithms();
+            }
+
+            render(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const stats = this.calculateStats();
+                const score = this.calculatePQCScore();
+                const actions = this.getActionItems();
+                const recommendations = this.getRecommendations();
+
+                container.innerHTML = `
+                    <div class="summary-header">
+                        <h2>Executive Summary</h2>
+                        <p>Key metrics and actionable insights for stakeholders</p>
+                    </div>
+
+                    <div class="summary-grid">
+                        ${this.renderOverviewCard(stats)}
+                        ${this.renderPQCCard(score)}
+                        ${this.renderCertHealthCard()}
+                        ${this.renderActionsCard(actions)}
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>Top Recommendations</h3>
+                        ${this.renderRecommendations(recommendations)}
+                    </div>
+
+                    <div class="summary-export">
+                        <button onclick="window.executiveSummary.exportSummary()">
+                            📋 Export Summary Report
+                        </button>
+                    </div>
+                `;
+            }
+
+            calculateStats() {
+                const byType = {};
+                this.components.forEach(comp => {
+                    const type = comp.cryptoProperties?.assetType || 'other';
+                    byType[type] = (byType[type] || 0) + 1;
+                });
+
+                // Count CycloneDX component types (library, application)
+                // These are in comp.type, NOT in cryptoProperties.assetType
+                let libraries = 0, applications = 0;
+                let services = 0, clients = 0, utilities = 0;
+                this.components.forEach(comp => {
+                    if (comp.type === 'library') {
+                        libraries++;
+                    } else if (comp.type === 'application') {
+                        applications++;
+                        // Calculate application role breakdown
+                        const props = comp.properties || [];
+                        const roleProp = props.find(p => p.name === 'cbom:app:role');
+                        const role = roleProp ? roleProp.value : 'utility';
+
+                        if (role === 'service') services++;
+                        else if (role === 'client') clients++;
+                        else utilities++;
+                    }
+                });
+
+                // Calculate dependency/provides totals (Phase 4)
+                const dependencies = this.parser.dependencies || [];
+                let totalDependsOn = 0;
+                let totalProvides = 0;
+                let componentsWithDependsOn = 0;
+                let componentsWithProvides = 0;
+
+                // Relationship type breakdown
+                const relTypeCounts = {
+                    DEPENDS_ON: 0,
+                    AUTHENTICATES_WITH: 0,
+                    SIGNS: 0,
+                    ISSUED_BY: 0,
+                    USES: 0,
+                    CONFIGURES: 0,
+                    IMPLEMENTS: 0,
+                    PROVIDES: 0
+                };
+
+                // Local helper to infer relationship type from bom-ref prefixes
+                const getRelType = (sourceRef, targetRef) => {
+                    const sourcePrefix = sourceRef.split(':')[0];
+                    const targetPrefix = targetRef.split(':')[0];
+                    const sourceIsApp = sourcePrefix === 'asset' || sourcePrefix === 'app';
+
+                    if (sourcePrefix === 'key' && targetPrefix === 'cert') return 'SIGNS';
+                    if (sourcePrefix === 'cert' && targetPrefix === 'cert') return 'ISSUED_BY';
+                    if (sourceIsApp && targetPrefix === 'cert') return 'AUTHENTICATES_WITH';
+                    if (sourceIsApp && targetPrefix === 'key') return 'AUTHENTICATES_WITH';
+                    if (sourcePrefix === 'cert' && targetPrefix === 'key') return 'AUTHENTICATES_WITH';
+                    if (sourceIsApp && targetPrefix === 'library') return 'DEPENDS_ON';
+                    if (sourcePrefix === 'library' && targetPrefix === 'algo') return 'IMPLEMENTS';
+                    if (sourceIsApp && targetPrefix === 'protocol') return 'CONFIGURES';
+                    if (sourcePrefix === 'protocol' && targetPrefix === 'algo') return 'USES';
+                    if (sourcePrefix === 'protocol' && targetPrefix === 'cipher') return 'PROVIDES';
+                    return 'DEPENDS_ON';
+                };
+
+                dependencies.forEach(dep => {
+                    if (dep.dependsOn && dep.dependsOn.length > 0) {
+                        totalDependsOn += dep.dependsOn.length;
+                        componentsWithDependsOn++;
+                        // Count by inferred relationship type
+                        dep.dependsOn.forEach(target => {
+                            const relType = getRelType(dep.ref, target);
+                            if (relTypeCounts.hasOwnProperty(relType)) {
+                                relTypeCounts[relType]++;
+                            } else {
+                                relTypeCounts.DEPENDS_ON++;
+                            }
+                        });
+                    }
+                    if (dep.provides && dep.provides.length > 0) {
+                        totalProvides += dep.provides.length;
+                        componentsWithProvides++;
+                        relTypeCounts.PROVIDES += dep.provides.length;
+                    }
+                });
+
+                return {
+                    total: this.components.length,
+                    certificates: byType['certificate'] || 0,
+                    algorithms: byType['algorithm'] || 0,
+                    keys: byType['related-crypto-material'] || 0,
+                    protocols: byType['protocol'] || 0,
+                    libraries: libraries,
+                    applications: applications,
+                    services: services,
+                    clients: clients,
+                    utilities: utilities,
+                    other: byType['other'] || 0,
+                    // Phase 4: Relationship statistics
+                    totalDependencies: totalDependsOn,
+                    totalProvides: totalProvides,
+                    totalRelationships: totalDependsOn + totalProvides,
+                    componentsWithDependsOn: componentsWithDependsOn,
+                    componentsWithProvides: componentsWithProvides,
+                    relTypeCounts: relTypeCounts
+                };
+            }
+
+            calculatePQCScore() {
+                const safe = parseInt(this.metadata.safe_count) || 0;
+                const transitional = parseInt(this.metadata.transitional_count) || 0;
+                const unsafe = parseInt(this.metadata.unsafe_count) || 0;
+                const total = safe + transitional + unsafe;
+
+                if (total === 0) return { score: 0, level: 'UNKNOWN', class: '' };
+
+                const score = Math.round((safe * 100 + transitional * 50) / total);
+
+                let level, levelClass;
+                if (score >= 80) {
+                    level = 'LOW RISK';
+                    levelClass = 'safe';
+                } else if (score >= 60) {
+                    level = 'MEDIUM RISK';
+                    levelClass = 'transitional';
+                } else if (score >= 40) {
+                    level = 'HIGH RISK';
+                    levelClass = 'transitional';
+                } else {
+                    level = 'CRITICAL RISK';
+                    levelClass = 'unsafe';
+                }
+
+                return { score, level, class: levelClass, safe, transitional, unsafe, total };
+            }
+
+            getCertificateHealth() {
+                const now = new Date();
+                let expired = 0;
+                let expiringSoon = 0;
+                let healthy = 0;
+
+                this.certificates.forEach(cert => {
+                    const notValidAfter = cert.cryptoProperties?.certificateProperties?.notValidAfter;
+                    if (!notValidAfter) return;
+
+                    try {
+                        const expDate = new Date(notValidAfter);
+                        const daysUntil = Math.floor((expDate - now) / (1000 * 60 * 60 * 24));
+
+                        if (daysUntil < 0) {
+                            expired++;
+                        } else if (daysUntil <= 90) {
+                            expiringSoon++;
+                        } else {
+                            healthy++;
+                        }
+                    } catch (e) {}
+                });
+
+                return { expired, expiringSoon, healthy, total: this.certificates.length };
+            }
+
+            getActionItems() {
+                const items = [];
+                const pqc = this.calculatePQCScore();
+                const certHealth = this.getCertificateHealth();
+
+                const break2030 = parseInt(this.metadata.break_2030_count) || 0;
+                const break2035 = parseInt(this.metadata.break_2035_count) || 0;
+
+                if (break2030 > 0) {
+                    items.push({
+                        icon: '🔴',
+                        title: `${break2030} assets require IMMEDIATE migration`,
+                        description: 'Quantum break estimated by 2030. Begin migration planning now.'
+                    });
+                }
+
+                if (certHealth.expired > 0) {
+                    items.push({
+                        icon: '⚠️',
+                        title: `${certHealth.expired} certificates have EXPIRED`,
+                        description: 'Replace expired certificates immediately to maintain security.'
+                    });
+                }
+
+                if (certHealth.expiringSoon > 0) {
+                    items.push({
+                        icon: '🟡',
+                        title: `${certHealth.expiringSoon} certificates expiring within 90 days`,
+                        description: 'Schedule certificate renewals before expiration.'
+                    });
+                }
+
+                if (break2035 > 0) {
+                    items.push({
+                        icon: '🟠',
+                        title: `${break2035} assets need planning by 2027`,
+                        description: 'Quantum break estimated by 2035. Include in migration roadmap.'
+                    });
+                }
+
+                if (pqc.unsafe > 0) {
+                    items.push({
+                        icon: '🔒',
+                        title: `${pqc.unsafe} assets using quantum-vulnerable algorithms`,
+                        description: 'Consider transitioning to post-quantum cryptographic algorithms.'
+                    });
+                }
+
+                return items.slice(0, 5); // Max 5 items
+            }
+
+            getRecommendations() {
+                const recommendations = [];
+                const pqc = this.calculatePQCScore();
+                const certHealth = this.getCertificateHealth();
+
+                if (pqc.score < 60) {
+                    recommendations.push({
+                        icon: '🎯',
+                        text: 'Develop a PQC migration roadmap with milestones'
+                    });
+                }
+
+                if (certHealth.expired > 0 || certHealth.expiringSoon > 10) {
+                    recommendations.push({
+                        icon: '📅',
+                        text: 'Implement automated certificate lifecycle management'
+                    });
+                }
+
+                recommendations.push({
+                    icon: '📊',
+                    text: 'Run regular CBOM scans to track cryptographic posture'
+                });
+
+                if (pqc.transitional > 0) {
+                    recommendations.push({
+                        icon: '🔄',
+                        text: 'Test hybrid PQC algorithms in non-production environments'
+                    });
+                }
+
+                recommendations.push({
+                    icon: '📚',
+                    text: 'Stay updated on NIST PQC standardization progress'
+                });
+
+                return recommendations.slice(0, 5);
+            }
+
+            renderOverviewCard(stats) {
+                return `
+                    <div class="summary-card">
+                        <h3>Inventory Overview</h3>
+                        <div class="summary-stat">
+                            <span class="label">Total Components</span>
+                            <span class="value">${stats.total}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Certificates</span>
+                            <span class="value">${stats.certificates}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Algorithms</span>
+                            <span class="value">${stats.algorithms}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Keys & Materials</span>
+                            <span class="value">${stats.keys}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Protocols</span>
+                            <span class="value">${stats.protocols}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Libraries</span>
+                            <span class="value">${stats.libraries}</span>
+                        </div>
+                        <div class="summary-stat" style="margin-top: 15px;">
+                            <span class="label">Applications</span>
+                            <span class="value">${stats.applications}</span>
+                        </div>
+                        <div class="summary-stat sub-stat">
+                            <span class="label">├ Services</span>
+                            <span class="value" style="color: #d32f2f;">${stats.services}</span>
+                        </div>
+                        <div class="summary-stat sub-stat">
+                            <span class="label">├ Clients</span>
+                            <span class="value" style="color: #1976d2;">${stats.clients}</span>
+                        </div>
+                        <div class="summary-stat sub-stat">
+                            <span class="label">└ Utilities</span>
+                            <span class="value" style="color: #666;">${stats.utilities}</span>
+                        </div>
+                        <div class="summary-stat" style="margin-top: 15px;">
+                            <span class="label">Relationships</span>
+                            <span class="value">${stats.totalRelationships || 0}</span>
+                        </div>
+                        ${(() => {
+                            const types = stats.relTypeCounts || {};
+                            const entries = Object.entries(types).filter(([_, count]) => count > 0);
+                            return entries.map(([type, count], i) => {
+                                const isLast = i === entries.length - 1;
+                                const connector = isLast ? '└' : '├';
+                                const label = type.replace(/_/g, ' ').toLowerCase()
+                                    .replace(/\b\w/g, c => c.toUpperCase());
+                                return `
+                        <div class="summary-stat sub-stat">
+                            <span class="label">${connector} ${label}</span>
+                            <span class="value">${count}</span>
+                        </div>`;
+                            }).join('');
+                        })()}
+                    </div>
+                `;
+            }
+
+            renderPQCCard(score) {
+                return `
+                    <div class="summary-card">
+                        <h3>PQC Readiness</h3>
+                        <div class="summary-stat">
+                            <span class="label">Overall Score</span>
+                            <span class="value ${score.class}">${score.score}/100</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Risk Level</span>
+                            <span class="value ${score.class}">${score.level}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Safe</span>
+                            <span class="value safe">${score.safe}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Transitional</span>
+                            <span class="value transitional">${score.transitional}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Unsafe</span>
+                            <span class="value unsafe">${score.unsafe}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderCertHealthCard() {
+                const health = this.getCertificateHealth();
+                return `
+                    <div class="summary-card">
+                        <h3>Certificate Health</h3>
+                        <div class="summary-stat">
+                            <span class="label">Total Certificates</span>
+                            <span class="value">${health.total}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Healthy</span>
+                            <span class="value safe">${health.healthy}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Expiring Soon (≤90d)</span>
+                            <span class="value transitional">${health.expiringSoon}</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Expired</span>
+                            <span class="value unsafe">${health.expired}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderActionsCard(actions) {
+                if (actions.length === 0) {
+                    return `
+                        <div class="summary-card">
+                            <h3>Action Items</h3>
+                            <p style="color: var(--color-safe); text-align: center; padding: 20px;">
+                                ✅ No critical actions required
+                            </p>
+                        </div>
+                    `;
+                }
+
+                const actionsHtml = actions.map(action => `
+                    <div class="action-item">
+                        <span class="action-icon">${action.icon}</span>
+                        <div class="action-content">
+                            <div class="title">${action.title}</div>
+                            <div class="description">${action.description}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="summary-card">
+                        <h3>Priority Actions</h3>
+                        ${actionsHtml}
+                    </div>
+                `;
+            }
+
+            renderRecommendations(recommendations) {
+                const items = recommendations.map(rec => `
+                    <li>
+                        <span class="icon">${rec.icon}</span>
+                        <span>${rec.text}</span>
+                    </li>
+                `).join('');
+
+                return `<ul class="recommendation-list">${items}</ul>`;
+            }
+
+            exportSummary() {
+                const stats = this.calculateStats();
+                const score = this.calculatePQCScore();
+                const certHealth = this.getCertificateHealth();
+                const actions = this.getActionItems();
+
+                const report = `CBOM EXECUTIVE SUMMARY REPORT
+Generated: ${new Date().toISOString()}
+=====================================
+
+INVENTORY OVERVIEW
+------------------
+Total Components: ${stats.total}
+- Certificates: ${stats.certificates}
+- Algorithms: ${stats.algorithms}
+- Keys & Materials: ${stats.keys}
+- Protocols: ${stats.protocols}
+
+PQC READINESS
+-------------
+Overall Score: ${score.score}/100
+Risk Level: ${score.level}
+- Safe: ${score.safe}
+- Transitional: ${score.transitional}
+- Unsafe: ${score.unsafe}
+
+CERTIFICATE HEALTH
+------------------
+Total: ${certHealth.total}
+- Healthy: ${certHealth.healthy}
+- Expiring Soon: ${certHealth.expiringSoon}
+- Expired: ${certHealth.expired}
+
+PRIORITY ACTIONS
+----------------
+${actions.map((a, i) => `${i + 1}. ${a.title}\n   ${a.description}`).join('\n\n')}
+
+=====================================
+Report generated by CipherIQ CBOM Visualizer
+`;
+
+                const blob = new Blob([report], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cbom-summary-${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        /* ===== Global Helper Functions ===== */
+        function goToPage(pageNum) {
+            if (window.cbomExplorer) {
+                window.cbomExplorer.currentPage = pageNum;
+                window.cbomExplorer.render('explorer-content');
+            }
+        }
+
+        function showComponentDetails(bomRef) {
+            if (!window.cbomParser) return;
+
+            const component = window.cbomParser.components.find(c => c['bom-ref'] === bomRef);
+            if (!component) {
+                alert('Component not found: ' + bomRef);
+                return;
+            }
+
+            // Helper to get property value
+            function getProp(props, name) {
+                const prop = (props || []).find(p => p.name === name);
+                return prop ? prop.value : null;
+            }
+
+            // Format library-specific properties
+            let formattedDetails = '';
+            const isLibrary = component.type === 'library' || bomRef.startsWith('library:');
+
+            if (isLibrary) {
+                const props = component.properties || [];
+                const libName = getProp(props, 'cbom:lib:name') || component.name;
+                const version = getProp(props, 'cbom:lib:version') || 'N/A';
+                const embedded = getProp(props, 'cbom:lib:embedded_provider') === 'true';
+                const packageMgr = getProp(props, 'cbom:lib:package_manager') || 'N/A';
+                const confidence = getProp(props, 'cbom:ctx:confidence') || '1.0';
+
+                // Get all implemented algorithms
+                const algorithms = props.filter(p => p.name === 'cbom:lib:implements').map(p => p.value);
+
+                formattedDetails = `
+                    <div class="lib-details" style="margin: 20px 0;">
+                        <h4 style="margin-bottom: 15px; color: #6a1b9a;">Library Information</h4>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 8px; font-weight: 600;">Name:</td>
+                                <td style="padding: 8px;">${libName}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 8px; font-weight: 600;">Version:</td>
+                                <td style="padding: 8px;">${version}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 8px; font-weight: 600;">Type:</td>
+                                <td style="padding: 8px;">${embedded ? '<span style="color: #8e24aa; font-weight: 600;">Embedded Provider</span>' : 'System Library'}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 8px; font-weight: 600;">Package Manager:</td>
+                                <td style="padding: 8px;">${packageMgr}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 8px; font-weight: 600;">Detection Confidence:</td>
+                                <td style="padding: 8px;">${confidence}</td>
+                            </tr>
+                            ${algorithms.length > 0 ? `
+                            <tr>
+                                <td style="padding: 8px; font-weight: 600; vertical-align: top;">Implements:</td>
+                                <td style="padding: 8px;">
+                                    ${algorithms.map(algo => `<span style="display: inline-block; background: #e3f2fd; padding: 4px 8px; margin: 2px; border-radius: 3px; font-size: 0.9em;">${algo}</span>`).join('')}
+                                </td>
+                            </tr>
+                            ` : ''}
+                        </table>
+                    </div>
+                `;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 900px; max-height: 80vh; overflow-y: auto;">
+                    <span class="modal-close" onclick="this.parentElement.parentElement.remove()">×</span>
+                    <h3>Component Details</h3>
+                    <p><strong>BOM Reference:</strong> ${bomRef}</p>
+                    ${formattedDetails}
+                    ${formattedDetails ? '<h4 style="margin-top: 20px;">Complete Component Data</h4>' : ''}
+                    <pre><code>${JSON.stringify(component, null, 2)}</code></pre>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        function showDependencies(bomRef) {
+            if (!window.cbomParser) return;
+
+            const dependencies = window.cbomParser.dependencies || [];
+
+            // Helper to get type class for coloring
+            function getTypeClass(ref) {
+                if (ref.startsWith('app:') || ref.startsWith('asset:hash-app')) return 'dep-type-application';
+                if (ref.startsWith('protocol:')) return 'dep-type-protocol';
+                if (ref.startsWith('algo:')) return 'dep-type-algorithm';
+                if (ref.startsWith('cert:')) return 'dep-type-certificate';
+                if (ref.startsWith('key:')) return 'dep-type-key';
+                if (ref.startsWith('library:')) return 'dep-type-library';
+                if (ref.startsWith('cipher:')) return 'dep-type-algorithm';  // Cipher suites
+                return '';
+            }
+
+            // Infer relationship type from component types (NEW v1.6.0)
+            function inferRelationshipType(sourceRef, targetRef) {
+                const sourcePrefix = sourceRef.split(':')[0];
+                const targetPrefix = targetRef.split(':')[0];
+
+                // Handle asset:hash-* refs (applications)
+                const sourceIsApp = sourcePrefix === 'asset' || sourcePrefix === 'app';
+                const targetIsApp = targetPrefix === 'asset' || targetPrefix === 'app';
+
+                // Key relationships
+                if (sourcePrefix === 'key' && targetPrefix === 'cert') return 'SIGNS';
+
+                // Certificate relationships
+                if (sourcePrefix === 'cert' && targetPrefix === 'cert') return 'ISSUED_BY';
+                if (sourceIsApp && targetPrefix === 'cert') return 'AUTHENTICATES_WITH';
+
+                // Library relationships
+                if (sourceIsApp && targetPrefix === 'library') return 'DEPENDS_ON';
+                if (sourcePrefix === 'library' && targetPrefix === 'algo') return 'IMPLEMENTS';
+
+                // Protocol relationships
+                if (sourceIsApp && targetPrefix === 'protocol') return 'CONFIGURES';
+                if (sourcePrefix === 'protocol' && targetPrefix === 'algo') return 'USES';
+                if (sourcePrefix === 'protocol' && targetPrefix === 'cipher') return 'PROVIDES';
+
+                // Default
+                return 'DEPENDS_ON';
+            }
+
+            // Get human-readable label for relationship type
+            function getRelationshipLabel(relType) {
+                const labels = {
+                    'SIGNS': 'signs',
+                    'ISSUED_BY': 'issued by',
+                    'DEPENDS_ON': 'depends on',
+                    'USES': 'uses',
+                    'AUTHENTICATES_WITH': 'authenticates with',
+                    'CONFIGURES': 'configures',
+                    'PROVIDES': 'provides',
+                    'IMPLEMENTS': 'implements'
+                };
+                return labels[relType] || 'depends on';
+            }
+
+            // Build tree recursively with relationship type labels
+            function buildTree(ref, depth = 0, prefix = '', isLast = true) {
+                const deps = dependencies.find(d => d.ref === ref);
+                if (!deps || !deps.dependsOn || deps.dependsOn.length === 0) return '';
+
+                let html = '';
+                deps.dependsOn.forEach((child, i) => {
+                    const childIsLast = i === deps.dependsOn.length - 1;
+                    const connector = childIsLast ? '└── ' : '├── ';
+                    const childPrefix = prefix + (isLast ? '    ' : '│   ');
+                    const typeClass = getTypeClass(child);
+
+                    // NEW: Infer and display relationship type
+                    const relType = inferRelationshipType(ref, child);
+                    const relLabel = getRelationshipLabel(relType);
+
+                    html += `${prefix}${connector}<span class="rel-type" style="color: #666; font-size: 0.85em; font-weight: 600;">${relLabel}</span> <span class="${typeClass}">${child}</span>\n`;
+                    html += buildTree(child, depth + 1, childPrefix, childIsLast);
+                });
+
+                return html;
+            }
+
+            // Phase 4: Build provides tree with relationship type labels
+            function buildProvidesTree(ref, prefix = '') {
+                const deps = dependencies.find(d => d.ref === ref);
+                if (!deps || !deps.provides || deps.provides.length === 0) return '';
+
+                let html = '';
+                deps.provides.forEach((child, i) => {
+                    const childIsLast = i === deps.provides.length - 1;
+                    const connector = childIsLast ? '└── ' : '├── ';
+                    const typeClass = getTypeClass(child);
+
+                    // NEW: Infer and display relationship type for provides
+                    const relType = inferRelationshipType(ref, child);
+                    const relLabel = getRelationshipLabel(relType);
+
+                    html += `${prefix}${connector}<span class="rel-type" style="color: #8e24aa; font-size: 0.85em; font-weight: 600;">${relLabel}</span> <span class="${typeClass} dep-provides">${child}</span>\n`;
+                });
+
+                return html;
+            }
+
+            // NEW: Build complete transitive relationship chain with nested semantics
+            function buildCompleteChain(ref, depth = 0, prefix = '', isLast = true, visited = new Set()) {
+                // Prevent circular references
+                if (visited.has(ref)) return '';
+                visited.add(ref);
+
+                const deps = dependencies.find(d => d.ref === ref);
+                if (!deps) return '';
+
+                let html = '';
+
+                // Process dependsOn relationships
+                if (deps.dependsOn && deps.dependsOn.length > 0) {
+                    deps.dependsOn.forEach((child, i) => {
+                        const childIsLast = i === deps.dependsOn.length - 1 && (!deps.provides || deps.provides.length === 0);
+                        const connector = childIsLast ? '└── ' : '├── ';
+                        const childPrefix = prefix + (isLast ? '    ' : '│   ');
+                        const typeClass = getTypeClass(child);
+                        const relType = inferRelationshipType(ref, child);
+                        const relLabel = getRelationshipLabel(relType);
+
+                        // Get child component
+                        const childComp = components.find(c => c['bom-ref'] === child);
+                        const childName = childComp && childComp.name ? childComp.name : child;
+                        const childType = childComp ? childComp.type : '';
+
+                        html += `${prefix}${connector}[${relLabel.toUpperCase()}] <span class="${typeClass}">${childName}</span> <span style="color: #999; font-size: 0.8em;">(${childType})</span>\n`;
+
+                        // Recursively show what this child provides/implements
+                        const childDeps = dependencies.find(d => d.ref === child);
+                        if (childDeps) {
+                            if (childDeps.provides && childDeps.provides.length > 0) {
+                                const childProvidePrefix = childPrefix + '    ';
+                                childDeps.provides.forEach((provided, j) => {
+                                    const providedIsLast = j === childDeps.provides.length - 1;
+                                    const providedConnector = providedIsLast ? '└── ' : '├── ';
+                                    const providedClass = getTypeClass(provided);
+                                    const providedRelType = inferRelationshipType(child, provided);
+                                    const providedRelLabel = getRelationshipLabel(providedRelType);
+
+                                    const providedComp = components.find(c => c['bom-ref'] === provided);
+                                    const providedName = providedComp && providedComp.name ? providedComp.name : provided;
+
+                                    html += `${childPrefix}${providedConnector}[${providedRelLabel.toUpperCase()}] <span class="${providedClass}">${providedName}</span>\n`;
+                                });
+                            }
+                            // Also recursively show what this child depends on (nested dependsOn)
+                            if (childDeps.dependsOn && childDeps.dependsOn.length > 0) {
+                                childDeps.dependsOn.forEach((childDep, j) => {
+                                    const childDepIsLast = j === childDeps.dependsOn.length - 1;
+                                    const childDepConnector = childDepIsLast ? '└── ' : '├── ';
+                                    const childDepClass = getTypeClass(childDep);
+                                    const childDepRelType = inferRelationshipType(child, childDep);
+                                    const childDepRelLabel = getRelationshipLabel(childDepRelType);
+
+                                    const childDepComp = components.find(c => c['bom-ref'] === childDep);
+                                    const childDepName = childDepComp && childDepComp.name ? childDepComp.name : childDep;
+                                    const childDepType = childDepComp ? childDepComp.type : '';
+
+                                    html += `${childPrefix}${childDepConnector}[${childDepRelLabel.toUpperCase()}] <span class="${childDepClass}">${childDepName}</span> <span style="color: #999; font-size: 0.8em;">(${childDepType})</span>\n`;
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // Process provides relationships at root level
+                if (deps.provides && deps.provides.length > 0 && depth === 0) {
+                    deps.provides.forEach((child, i) => {
+                        const childIsLast = i === deps.provides.length - 1;
+                        const connector = childIsLast ? '└── ' : '├── ';
+                        const typeClass = getTypeClass(child);
+                        const relType = inferRelationshipType(ref, child);
+                        const relLabel = getRelationshipLabel(relType);
+
+                        const childComp = components.find(c => c['bom-ref'] === child);
+                        const childName = childComp && childComp.name ? childComp.name : child;
+                        const childType = childComp ? childComp.type : '';
+
+                        html += `${prefix}${connector}[${relLabel.toUpperCase()}] <span class="${typeClass}">${childName}</span> <span style="color: #999; font-size: 0.8em;">(${childType})</span>\n`;
+                    });
+                }
+
+                return html;
+            }
+
+            const deps = dependencies.find(d => d.ref === bomRef);
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+
+            // Helper: Get component name from bom-ref
+            const components = window.cbomParser.components || [];
+            const rootComponent = components.find(c => c['bom-ref'] === bomRef);
+            const rootName = rootComponent && rootComponent.name ? rootComponent.name : bomRef;
+
+            // Build both dependsOn, provides, and reverse relationships (Used By)
+            let dependsOnHtml = '';
+            let providesHtml = '';
+            let usedByHtml = '';
+            const rootClass = getTypeClass(bomRef);
+
+            if (deps && deps.dependsOn && deps.dependsOn.length > 0) {
+                dependsOnHtml = `
+                    <div class="dependency-section depends-section">
+                        <h4>Dependencies (${deps.dependsOn.length})</h4>
+                        <div class="dependency-tree"><span class="dep-root ${rootClass}" title="${bomRef}">${rootName}</span>
+${buildTree(bomRef, 0, '', true)}</div>
+                    </div>
+                `;
+            }
+
+            if (deps && deps.provides && deps.provides.length > 0) {
+                providesHtml = `
+                    <div class="dependency-section provides-section">
+                        <h4>Provides (${deps.provides.length})</h4>
+                        <div class="dependency-tree"><span class="dep-root ${rootClass}" title="${bomRef}">${rootName}</span>
+${buildProvidesTree(bomRef, '')}</div>
+                    </div>
+                `;
+            }
+
+            // NEW: Reverse relationships (what depends on this component)
+            const incoming = dependencies.filter(d =>
+                (d.dependsOn && d.dependsOn.includes(bomRef)) ||
+                (d.provides && d.provides.includes(bomRef))
+            );
+
+            if (incoming.length > 0) {
+                // Helper: resolve bom-ref to component name
+                const components = window.cbomParser.components || [];
+                function resolveRefToName(ref) {
+                    const comp = components.find(c => c['bom-ref'] === ref);
+                    return comp && comp.name ? comp.name : ref;
+                }
+
+                let incomingList = incoming.map(d => {
+                    const relType = inferRelationshipType(d.ref, bomRef);
+                    const relLabel = getRelationshipLabel(relType);
+                    const typeClass = getTypeClass(d.ref);
+                    const displayName = resolveRefToName(d.ref);
+
+                    return `├── <span class="${typeClass}" title="${d.ref}">${displayName}</span> <span class="rel-type" style="color: #999; font-size: 0.8em; font-style: italic;">(${relLabel} this)</span>`;
+                }).join('\n');
+
+                usedByHtml = `
+                    <div class="dependency-section used-by-section">
+                        <h4>Used By (${incoming.length})</h4>
+                        <div class="dependency-tree" style="color: #555;">${incomingList}</div>
+                    </div>
+                `;
+            }
+
+            // Build complete transitive chain
+            let completeChainHtml = '';
+            if (deps && ((deps.dependsOn && deps.dependsOn.length > 0) || (deps.provides && deps.provides.length > 0))) {
+                const chainTree = buildCompleteChain(bomRef, 0, '', true, new Set());
+                completeChainHtml = `
+                    <div class="dependency-section complete-chain-section" style="background: var(--color-surface-hover); padding: 15px; border-radius: 4px; margin-top: 15px;">
+                        <h4 style="color: var(--color-text);">Complete Relationship Chain</h4>
+                        <p style="color: var(--color-text-muted); font-size: 0.85em; margin-bottom: 10px;">Shows transitive dependencies with nested relationships</p>
+                        <div class="dependency-tree"><span class="dep-root ${rootClass}" title="${bomRef}">${rootName}</span>
+${chainTree}</div>
+                    </div>
+                `;
+            }
+
+            const treeHtml = dependsOnHtml || providesHtml || usedByHtml || completeChainHtml
+                ? dependsOnHtml + providesHtml + usedByHtml + completeChainHtml
+                : '<p style="color: var(--color-text-muted);">No relationships found for this component</p>';
+
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
+                    <span class="modal-close" onclick="this.parentElement.parentElement.remove()">×</span>
+                    <h3>Relationships</h3>
+                    <p style="margin-bottom: 15px;">
+                        <strong style="font-size: 1.1em; color: var(--color-text);">${rootName}</strong><br>
+                        <span style="color: var(--color-text-muted); font-size: 0.85em;" title="BOM Reference">${bomRef}</span>
+                    </p>
+                    ${treeHtml}
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => modal.remove());
+            }
+        });
+
+        /* ===== Tab Navigation ===== */
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            const selectedContent = document.getElementById(`${tabName}-content`);
+            if (selectedContent) {
+                selectedContent.classList.add('active');
+            }
+
+            // Add active class to selected tab
+            const selectedTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+        }
+
+        // Attach tab click handlers
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.getAttribute('data-tab');
+                    showTab(tabName);
+                });
+            });
+        });
+
+        /* ===== Load and render a CBOM JSON string ===== */
+        function loadCbomData(text, options) {
+            const opts = options || {};
+            const parser = new CBOMParser(text);
+            window.cbomParser = parser;
+
+            const dashboard = new PQCDashboard(parser);
+            dashboard.render('dashboard-content');
+
+            const heatmap = new CertificateHeatmap(parser);
+            heatmap.render('certificates-content');
+
+            const algoAnalysis = new AlgorithmAnalysis(parser);
+            algoAnalysis.render('algorithms-content');
+
+            const libraryDashboard = new LibraryDashboard(parser);
+            libraryDashboard.render('libraries-content');
+
+            const timeline = new MigrationTimeline(parser);
+            timeline.render('timeline-content');
+
+            const explorer = new CBOMExplorer(parser);
+            explorer.render('explorer-content');
+            window.cbomExplorer = explorer;
+
+            const summary = new ExecutiveSummary(parser);
+            summary.render('summary-content');
+            window.executiveSummary = summary;
+
+            showTab('dashboard');
+
+            setTimeout(() => {
+                try { dashboard.renderBreakTimeline('break-timeline-chart'); }
+                catch (e) { console.error('Error rendering break timeline:', e); }
+                try { algoAnalysis.renderPrimitiveChart('primitive-chart'); algoAnalysis.renderRSAChart('rsa-chart'); }
+                catch (e) { console.error('Error rendering algorithm charts:', e); }
+                try { timeline.renderTimelineViz('timeline-svg-container'); }
+                catch (e) { console.error('Error rendering timeline:', e); }
+            }, 100);
+
+            if (opts.showAlert !== false) {
+                alert(`CBOM loaded: ${parser.components.length} components`);
+            }
+        }
+
+        /* ===== File Upload Handler ===== */
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('cbom-upload').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const filenameSpan = document.getElementById('upload-filename');
+                if (filenameSpan) {
+                    filenameSpan.textContent = file.name;
+                    filenameSpan.title = file.name;
+                }
+
+                try {
+                    const text = await file.text();
+                    loadCbomData(text);
+                } catch (error) {
+                    alert('Error loading CBOM: ' + error.message);
+                    console.error('CBOM loading error:', error);
+                }
+            });
+        });
+
+        /* ===== SessionStorage Import (from CBOM Scanner handoff) ===== */
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const importKey = params.get('import');
+            if (!importKey) return;
+
+            const data = sessionStorage.getItem(importKey);
+            if (!data) return;
+            sessionStorage.removeItem(importKey);
+
+            try {
+                loadCbomData(data, { showAlert: false });
+            } catch (error) {
+                console.error('Error loading CBOM from scanner:', error);
+            }
+        });
+    </script>
+</body>
+</html>
