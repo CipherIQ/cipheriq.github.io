@@ -478,6 +478,7 @@
             border: 1px solid var(--color-border);
             padding: 25px;
             text-align: center;
+            cursor: pointer;
             transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-normal);
         }
 
@@ -1757,6 +1758,185 @@
             background: var(--color-primary-dark);
             transform: translateY(-2px);
         }
+        /* ===== Scanner Tab ===== */
+        .scan-dropzone {
+            border: 2px dashed var(--color-border);
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), background var(--transition-fast);
+            background: var(--color-surface);
+            max-width: 600px;
+            margin: 0 auto 24px;
+        }
+        .scan-dropzone:hover, .scan-dropzone.dragover {
+            border-color: var(--color-primary);
+            background: var(--color-surface-hover);
+        }
+        .scan-dropzone .drop-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .scan-dropzone .drop-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .scan-dropzone .drop-formats {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            margin-bottom: 10px;
+        }
+        .scan-dropzone .drop-browse {
+            color: var(--color-primary);
+            font-size: 0.9em;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .scan-platform-select {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .scan-platform-select label {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .scan-platform-select select {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: 0.9em;
+        }
+        .scan-progress {
+            max-width: 600px;
+            margin: 0 auto;
+            display: none;
+        }
+        .scan-progress.active { display: block; }
+        .scan-progress .scan-filename {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .scan-progress .scan-filesize {
+            font-size: 0.85em;
+            color: var(--color-text-muted);
+            margin-bottom: 16px;
+        }
+        .scan-progress-track {
+            width: 100%;
+            height: 8px;
+            background: var(--color-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .scan-progress-bar {
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 4px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+        .scan-phase {
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .scan-current-file {
+            font-size: 0.8em;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 18px;
+            margin-bottom: 12px;
+        }
+        .scan-results { display: none; }
+        .scan-results.active { display: block; }
+        .scan-summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        .scan-summary-card {
+            background: var(--color-surface-hover);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .scan-summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .scan-summary-card .card-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .scan-summary-card .card-label {
+            font-size: 0.8em;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+        .scan-summary-card.pqc-green .card-value { color: var(--color-safe); }
+        .scan-summary-card.pqc-yellow .card-value { color: var(--color-transitional); }
+        .scan-summary-card.pqc-red .card-value { color: var(--color-unsafe); }
+        .scan-actions {
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .scan-actions button {
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 600;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .scan-actions button:hover {
+            box-shadow: var(--shadow-md);
+        }
+        .scan-actions .btn-explore {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        .scan-actions .btn-explore:hover {
+            background: var(--color-primary-dark);
+        }
+        .scan-privacy-note {
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--color-text-muted);
+            margin-top: 16px;
+        }
+        .scan-error {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid var(--color-unsafe);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .scan-error.active { display: block; }
+        .scan-error h3 { color: var(--color-unsafe); margin-bottom: 8px; }
+        .scan-error p { font-size: 0.9em; margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -1803,7 +1983,8 @@
 
         <!-- Tab Navigation -->
         <div class="tabs">
-            <button class="tab active" data-tab="dashboard">Dashboard</button>
+            <button class="tab active" data-tab="scan">Scan</button>
+            <button class="tab" data-tab="dashboard">Dashboard</button>
             <button class="tab" data-tab="certificates">Certificates</button>
             <button class="tab" data-tab="algorithms">Algorithms</button>
             <button class="tab" data-tab="libraries">Libraries</button>
@@ -1814,10 +1995,66 @@
 
         <!-- Content Area -->
         <div class="content" id="content">
-            <div id="dashboard-content" class="tab-content active">
+            <!-- Scanner Tab -->
+            <div id="scan-content" class="tab-content active">
+                <div style="text-align:center; margin-bottom: 24px;">
+                    <h2>Scan Firmware Image</h2>
+                    <p style="color: var(--color-text-muted);">Drag and drop a firmware archive to scan for cryptographic assets</p>
+                </div>
+
+                <div class="scan-dropzone" id="scan-dropzone">
+                    <div class="drop-icon">&#x1F4E6;</div>
+                    <div class="drop-title">Drop firmware image here</div>
+                    <div class="drop-formats">Supports .tar.gz, .tgz, .zip, .tar</div>
+                    <div class="drop-browse">or click to browse</div>
+                </div>
+                <input type="file" id="scan-file-input" accept=".tar.gz,.tgz,.tar,.zip,.gz" style="display:none">
+
+                <div class="scan-platform-select">
+                    <label for="scan-platform">Target Platform:</label>
+                    <select id="scan-platform">
+                        <option value="yocto" selected>Yocto / Buildroot</option>
+                        <option value="ubuntu">Ubuntu / Debian</option>
+                        <option value="openwrt">OpenWrt</option>
+                        <option value="alpine">Alpine / Docker</option>
+                    </select>
+                </div>
+
+                <div class="scan-progress" id="scan-progress">
+                    <div class="scan-filename" id="scan-filename"></div>
+                    <div class="scan-filesize" id="scan-filesize"></div>
+                    <div class="scan-progress-track">
+                        <div class="scan-progress-bar" id="scan-progress-bar"></div>
+                    </div>
+                    <div class="scan-phase" id="scan-phase">Preparing...</div>
+                    <div class="scan-current-file" id="scan-current-file"></div>
+                    <div style="text-align:center">
+                        <button onclick="cancelScan()" style="padding:6px 20px; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); color:var(--color-text); cursor:pointer;">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="scan-error" id="scan-error">
+                    <h3>Scan Failed</h3>
+                    <p id="scan-error-message"></p>
+                    <button onclick="resetScanner()" style="padding:8px 20px; background:var(--color-primary); color:white; border:none; border-radius:6px; cursor:pointer;">Try Again</button>
+                </div>
+
+                <div class="scan-results" id="scan-results">
+                    <div class="scan-summary-cards" id="scan-summary-cards"></div>
+                    <div class="scan-actions">
+                        <button class="btn-explore" onclick="exploreResults()">Explore Results</button>
+                        <button onclick="downloadScanCbom()">Download CBOM (JSON)</button>
+                        <button onclick="resetScanner()">Scan Another File</button>
+                    </div>
+                </div>
+
+                <div class="scan-privacy-note">100% client-side. Your data never leaves this browser.</div>
+            </div>
+
+            <div id="dashboard-content" class="tab-content">
                 <div class="welcome-message">
                     <h2>Welcome to CBOM Explorer</h2>
-                    <p>Upload a CycloneDX CBOM file to begin analysis</p>
+                    <p>Upload a CycloneDX CBOM file or use the Scan tab to analyze a firmware image</p>
                 </div>
             </div>
             <div id="certificates-content" class="tab-content">
@@ -2222,19 +2459,19 @@
 
                 return `
                     <div class="status-cards">
-                        <div class="status-card">
+                        <div class="status-card" onclick="navigateToExplorer('all','SAFE')">
                             <h3>PQC SAFE</h3>
                             <div class="status-icon">🟢</div>
                             <div class="status-number status-safe">${safe}</div>
                             <div class="status-percentage status-safe">${safePercent}%</div>
                         </div>
-                        <div class="status-card">
+                        <div class="status-card" onclick="navigateToExplorer('all','TRANSITIONAL')">
                             <h3>TRANSITIONAL</h3>
                             <div class="status-icon">🟡</div>
                             <div class="status-number status-transitional">${transitional}</div>
                             <div class="status-percentage status-transitional">${transitionalPercent}%</div>
                         </div>
-                        <div class="status-card">
+                        <div class="status-card" onclick="navigateToExplorer('all','UNSAFE')">
                             <h3>UNSAFE</h3>
                             <div class="status-icon">🔴</div>
                             <div class="status-number status-unsafe">${unsafe}</div>
@@ -3152,6 +3389,7 @@
                 this.currentPage = 1;
                 this.pageSize = 21;
                 this.filterType = 'all';
+                this.pqcFilter = 'all';
                 this.searchTerm = '';
             }
 
@@ -3191,6 +3429,13 @@
                                 <option value="application" ${this.filterType === 'application' ? 'selected' : ''}>Applications</option>
                                 <option value="library" ${this.filterType === 'library' ? 'selected' : ''}>Libraries</option>
                             </select>
+                            <select id="explorer-pqc-filter" onchange="window.cbomExplorer.handlePqcFilter(event)">
+                                <option value="all" ${this.pqcFilter === 'all' ? 'selected' : ''}>All PQC Status</option>
+                                <option value="SAFE" ${this.pqcFilter === 'SAFE' ? 'selected' : ''}>Safe</option>
+                                <option value="TRANSITIONAL" ${this.pqcFilter === 'TRANSITIONAL' ? 'selected' : ''}>Transitional</option>
+                                <option value="UNSAFE" ${this.pqcFilter === 'UNSAFE' ? 'selected' : ''}>Unsafe</option>
+                                <option value="DEPRECATED" ${this.pqcFilter === 'DEPRECATED' ? 'selected' : ''}>Deprecated</option>
+                            </select>
                             <button onclick="window.cbomExplorer.exportFiltered()">📥 Export Filtered</button>
                         </div>
 
@@ -3198,6 +3443,7 @@
                             Showing ${filtered.length} of ${this.components.length} components
                             ${this.searchTerm ? ` matching "${this.searchTerm}"` : ''}
                             ${this.filterType !== 'all' ? ` (type: ${this.filterType})` : ''}
+                            ${this.pqcFilter !== 'all' ? ` (PQC: ${this.pqcFilter})` : ''}
                         </div>
 
                         <div class="components-grid" id="components-list">
@@ -3340,6 +3586,14 @@
                     filtered = filtered.filter(comp => {
                         const effectiveType = this.getEffectiveAssetType(comp);
                         return effectiveType === this.filterType;
+                    });
+                }
+
+                // Apply PQC status filter
+                if (this.pqcFilter !== 'all') {
+                    filtered = filtered.filter(comp => {
+                        const status = this.getPQCStatus(comp);
+                        return status === this.pqcFilter;
                     });
                 }
 
@@ -3498,6 +3752,12 @@
 
             handleFilter(event) {
                 this.filterType = event.target.value;
+                this.currentPage = 1;
+                this.render('explorer-content');
+            }
+
+            handlePqcFilter(event) {
+                this.pqcFilter = event.target.value;
                 this.currentPage = 1;
                 this.render('explorer-content');
             }
@@ -4481,12 +4741,34 @@ ${chainTree}</div>
             });
         });
 
-        /* ===== Load and render a CBOM JSON string ===== */
-        function loadCbomData(text, options) {
-            const opts = options || {};
-            const parser = new CBOMParser(text);
+        /* ===== Navigate to Explorer with filters ===== */
+        function navigateToExplorer(type, pqcStatus) {
+            if (!window.cbomExplorer) return;
+            window.cbomExplorer.filterType = type || 'all';
+            window.cbomExplorer.pqcFilter = pqcStatus || 'all';
+            window.cbomExplorer.currentPage = 1;
+            showTab('explorer');
+            window.cbomExplorer.render('explorer-content');
+        }
+
+        /* ===== Shared CBOM Loading ===== */
+
+        /**
+         * Load a CycloneDX CBOM object into all visualization tabs.
+         * Used by both the file upload handler and the embedded scanner.
+         * @param {Object} cbomObj - Parsed CycloneDX CBOM JSON object
+         * @param {Object} [options]
+         * @param {boolean} [options.switchToDashboard=true] - Switch to Dashboard tab after loading
+         * @param {boolean} [options.showAlert=true] - Show alert with component count
+         */
+        function loadCbomData(cbomObj, options = {}) {
+            const { switchToDashboard = true, showAlert = true } = options;
+
+            // CBOMParser expects a JSON string
+            const parser = new CBOMParser(JSON.stringify(cbomObj));
             window.cbomParser = parser;
 
+            // Render all views
             const dashboard = new PQCDashboard(parser);
             dashboard.render('dashboard-content');
 
@@ -4502,29 +4784,43 @@ ${chainTree}</div>
             const timeline = new MigrationTimeline(parser);
             timeline.render('timeline-content');
 
-            const explorer = new CBOMExplorer(parser);
-            explorer.render('explorer-content');
-            window.cbomExplorer = explorer;
+            const explorerView = new CBOMExplorer(parser);
+            explorerView.render('explorer-content');
+            window.cbomExplorer = explorerView;
 
             const summary = new ExecutiveSummary(parser);
             summary.render('summary-content');
             window.executiveSummary = summary;
 
-            showTab('dashboard');
+            if (switchToDashboard) {
+                showTab('dashboard');
+            }
 
+            // Render charts after DOM is updated
             setTimeout(() => {
                 try { dashboard.renderBreakTimeline('break-timeline-chart'); }
-                catch (e) { console.error('Error rendering break timeline:', e); }
+                catch (e) { console.error('Break timeline error:', e); }
                 try { algoAnalysis.renderPrimitiveChart('primitive-chart'); algoAnalysis.renderRSAChart('rsa-chart'); }
-                catch (e) { console.error('Error rendering algorithm charts:', e); }
+                catch (e) { console.error('Algorithm chart error:', e); }
                 try { timeline.renderTimelineViz('timeline-svg-container'); }
-                catch (e) { console.error('Error rendering timeline:', e); }
+                catch (e) { console.error('Timeline error:', e); }
             }, 100);
 
-            if (opts.showAlert !== false) {
+            if (showAlert) {
                 alert(`CBOM loaded: ${parser.components.length} components`);
             }
         }
+
+        /* ===== Explorer API ===== */
+
+        window.__CBOM_EXPLORER__ = {
+            loadCbom(cbom) {
+                loadCbomData(cbom, { switchToDashboard: false, showAlert: false });
+            },
+            switchTab(tabName) {
+                showTab(tabName);
+            }
+        };
 
         /* ===== File Upload Handler ===== */
         document.addEventListener('DOMContentLoaded', () => {
@@ -4540,30 +4836,410 @@ ${chainTree}</div>
 
                 try {
                     const text = await file.text();
-                    loadCbomData(text);
+                    const cbomObj = JSON.parse(text);
+                    loadCbomData(cbomObj);
                 } catch (error) {
                     alert('Error loading CBOM: ' + error.message);
                     console.error('CBOM loading error:', error);
                 }
             });
-        });
 
-        /* ===== SessionStorage Import (from CBOM Scanner handoff) ===== */
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
+            // Check for sessionStorage import from standalone scanner
+            const params = new URLSearchParams(location.search);
             const importKey = params.get('import');
-            if (!importKey) return;
-
-            const data = sessionStorage.getItem(importKey);
-            if (!data) return;
-            sessionStorage.removeItem(importKey);
-
-            try {
-                loadCbomData(data, { showAlert: false });
-            } catch (error) {
-                console.error('Error loading CBOM from scanner:', error);
+            if (importKey) {
+                try {
+                    const cbomJson = sessionStorage.getItem(importKey);
+                    if (cbomJson) {
+                        sessionStorage.removeItem(importKey);
+                        const cbomObj = JSON.parse(cbomJson);
+                        loadCbomData(cbomObj, { showAlert: false });
+                    }
+                } catch (e) {
+                    console.error('SessionStorage import error:', e);
+                }
+                // Clean up URL
+                history.replaceState(null, '', location.pathname);
             }
         });
+
+        /* ===== Scanner Tab ===== */
+        (function() {
+            const PLATFORMS = {
+                yocto:   { pluginSet: 'embedded', registry: 'yocto' },
+                ubuntu:  { pluginSet: 'ubuntu',   registry: 'ubuntu' },
+                openwrt: { pluginSet: 'embedded', registry: 'openwrt' },
+                alpine:  { pluginSet: 'ubuntu',   registry: 'alpine' },
+            };
+
+            // Scanner base path — adjust if deployment layout differs
+            const SCANNER_BASE = 'scanner';
+
+            const PLUGIN_FILES = {
+                embedded: [
+                    'avahi.yaml', 'b2sum.yaml', 'balena-engine.yaml', 'bluez.yaml',
+                    'chrony.yaml', 'dbus.yaml', 'dropbear.yaml', 'git.yaml',
+                    'iwd.yaml', 'k3s.yaml', 'lighttpd.yaml', 'md5sum.yaml',
+                    'mosquitto.yaml', 'NetworkManager.yaml', 'node-red.yaml',
+                    'openplc.yaml', 'rsync.yaml', 'sha1sum.yaml', 'sha224sum.yaml',
+                    'sha256sum.yaml', 'sha384sum.yaml', 'sha512sum.yaml',
+                    'strongswan.yaml', 'systemd.yaml', 'tinc.yaml', 'udev.yaml',
+                    'uhttpd.yaml', 'wpa_supplicant.yaml',
+                ],
+                ubuntu: null,
+            };
+
+            let scanCancelled = false;
+            let scanResultCbom = null;
+
+            // Dropzone handlers
+            const dropzone = document.getElementById('scan-dropzone');
+            const fileInput = document.getElementById('scan-file-input');
+
+            if (dropzone && fileInput) {
+                dropzone.addEventListener('click', () => fileInput.click());
+                dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+                dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    if (e.dataTransfer.files[0]) startScan(e.dataTransfer.files[0]);
+                });
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files[0]) startScan(fileInput.files[0]);
+                    fileInput.value = '';
+                });
+            }
+
+            function formatSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+                return (bytes / 1073741824).toFixed(2) + ' GB';
+            }
+
+            function setScanProgress(pct, phase, currentFile) {
+                if (pct !== undefined) document.getElementById('scan-progress-bar').style.width = pct + '%';
+                if (phase) document.getElementById('scan-phase').textContent = phase;
+                if (currentFile !== undefined) document.getElementById('scan-current-file').textContent = currentFile || '';
+            }
+
+            function showScanState(state) {
+                const dz = document.getElementById('scan-dropzone');
+                const ps = document.querySelector('.scan-platform-select');
+                const pr = document.getElementById('scan-progress');
+                const rs = document.getElementById('scan-results');
+                const er = document.getElementById('scan-error');
+
+                dz.style.display = state === 'landing' ? '' : 'none';
+                ps.style.display = state === 'landing' ? '' : 'none';
+                pr.classList.toggle('active', state === 'scanning');
+                rs.classList.toggle('active', state === 'results');
+                er.classList.toggle('active', state === 'error');
+            }
+
+            // MEMFS helpers
+            function parentDir(path) {
+                const idx = path.lastIndexOf('/');
+                return idx <= 0 ? '/' : path.substring(0, idx);
+            }
+            function mkdirp(FS, path) {
+                if (path === '/' || path === '') return;
+                try { FS.stat(path); return; } catch {}
+                mkdirp(FS, parentDir(path));
+                try { FS.mkdir(path); } catch {}
+            }
+
+            function detectArchivePrefix(files) {
+                if (files.size === 0) return null;
+                const systemDirs = new Set([
+                    'usr','etc','lib','lib64','bin','sbin','var','opt','home',
+                    'root','tmp','dev','proc','sys','run','srv','mnt','media',
+                ]);
+                let commonFirst = null;
+                for (const path of files.keys()) {
+                    const firstSeg = path.split('/')[0];
+                    if (commonFirst === null) commonFirst = firstSeg;
+                    else if (firstSeg !== commonFirst) return null;
+                }
+                if (!commonFirst || systemDirs.has(commonFirst)) return null;
+                const prefix = commonFirst + '/';
+                const markers = ['usr/', 'etc/', 'lib/'];
+                const hasRootfs = markers.some(m =>
+                    Array.from(files.keys()).some(p => p.startsWith(prefix + m))
+                );
+                return hasRootfs ? prefix : null;
+            }
+
+            function determineScanPaths(FS) {
+                const candidates = [
+                    '/scan/usr/bin','/scan/usr/sbin','/scan/usr/lib',
+                    '/scan/usr/lib64','/scan/usr/local/bin','/scan/usr/local/lib',
+                    '/scan/etc','/scan/lib',
+                ];
+                const detected = candidates.filter(p => {
+                    try { return FS.isDir(FS.stat(p).mode); } catch { return false; }
+                });
+                return detected.length > 0 ? detected : ['/scan'];
+            }
+
+            async function fetchPlugins(pluginSet) {
+                let filenames = PLUGIN_FILES[pluginSet];
+                if (!filenames) {
+                    const resp = await fetch(`${SCANNER_BASE}/plugins/${pluginSet}/`);
+                    if (!resp.ok) return {};
+                    const text = await resp.text();
+                    filenames = [...text.matchAll(/href="([^"]+\.ya?ml)"/gi)].map(m => m[1]);
+                }
+                const plugins = {};
+                await Promise.allSettled(
+                    filenames.map(async f => {
+                        const resp = await fetch(`${SCANNER_BASE}/plugins/${pluginSet}/${f}`);
+                        if (resp.ok) plugins[f] = await resp.text();
+                    })
+                );
+                return plugins;
+            }
+
+            async function fetchRegistry(registry) {
+                const resp = await fetch(`${SCANNER_BASE}/registry/crypto-registry-${registry}.yaml`);
+                if (!resp.ok) throw new Error(`Failed to load registry: crypto-registry-${registry}.yaml`);
+                return resp.text();
+            }
+
+            async function startScan(file) {
+                if (file.size > 2 * 1073741824) {
+                    document.getElementById('scan-error-message').textContent =
+                        'File too large (> 2 GB). Use the cbom-generator CLI tool.';
+                    showScanState('error');
+                    return;
+                }
+
+                scanCancelled = false;
+                scanResultCbom = null;
+                showScanState('scanning');
+                document.getElementById('scan-filename').textContent = file.name;
+                document.getElementById('scan-filesize').textContent = formatSize(file.size);
+
+                try {
+                    const t0 = performance.now();
+
+                    setScanProgress(5, 'Reading file...');
+                    const data = new Uint8Array(await file.arrayBuffer());
+                    if (scanCancelled) throw new Error('Cancelled');
+
+                    // Load modules lazily
+                    setScanProgress(8, 'Loading scanner modules...');
+                    const [{ extractArchive }, { parseCryptoAssets }, { extractCbomSummary }] = await Promise.all([
+                        import(`${SCANNER_BASE}/src/js/archive.js`),
+                        import(`${SCANNER_BASE}/src/js/cert-parser.js`),
+                        import(`${SCANNER_BASE}/src/js/cbom-summary.js`),
+                    ]);
+                    if (scanCancelled) throw new Error('Cancelled');
+
+                    // Extract archive
+                    setScanProgress(12, 'Extracting archive...');
+                    const { files, symlinks } = await extractArchive(data, {
+                        onProgress: ({ filesExtracted, currentFile }) => {
+                            if (filesExtracted % 50 === 0) {
+                                setScanProgress(12 + Math.min(filesExtracted / 80, 12),
+                                    `Extracting... (${filesExtracted} files)`, currentFile);
+                            }
+                        },
+                    });
+                    if (scanCancelled) throw new Error('Cancelled');
+                    setScanProgress(25, `Extracted ${files.size} files`);
+
+                    // Parse certificates
+                    setScanProgress(28, 'Analyzing certificates...');
+                    const certData = await parseCryptoAssets(files);
+                    if (scanCancelled) throw new Error('Cancelled');
+                    setScanProgress(35, `Found ${certData.certs.length} certificates`);
+
+                    // Load WASM + plugins + registry
+                    setScanProgress(38, 'Loading WASM scanner...');
+                    const platform = PLATFORMS[document.getElementById('scan-platform').value] || PLATFORMS.yocto;
+
+                    const [wasmModule, plugins, registryYaml] = await Promise.all([
+                        import(`${SCANNER_BASE}/cbom-generator.js`).then(m => m.default),
+                        fetchPlugins(platform.pluginSet),
+                        fetchRegistry(platform.registry),
+                    ]);
+                    if (scanCancelled) throw new Error('Cancelled');
+                    setScanProgress(50, 'Initializing scanner...');
+
+                    // Create WASM Module
+                    const Module = await wasmModule({
+                        print: () => {},
+                        printErr: (line) => {
+                            if (line.startsWith('[INFO]') || line.startsWith('[WARN]') || line.startsWith('[ERROR]'))
+                                setScanProgress(undefined, undefined, line);
+                        },
+                    });
+                    const FS = Module.FS;
+                    if (scanCancelled) throw new Error('Cancelled');
+
+                    // Mount files
+                    setScanProgress(55, 'Mounting files...');
+                    mkdirp(FS, '/scan');
+                    mkdirp(FS, '/output');
+                    const archivePrefix = detectArchivePrefix(files);
+                    let mounted = 0;
+                    for (const [path, fileData] of files) {
+                        const mountPath = archivePrefix && path.startsWith(archivePrefix)
+                            ? path.slice(archivePrefix.length) : path;
+                        mkdirp(FS, parentDir('/scan/' + mountPath));
+                        FS.writeFile('/scan/' + mountPath, fileData);
+                        mounted++;
+                        if (mounted % 200 === 0) {
+                            setScanProgress(55 + (mounted / files.size) * 10,
+                                `Mounting files (${mounted}/${files.size})`, mountPath);
+                            await new Promise(r => setTimeout(r, 0));
+                        }
+                    }
+                    if (scanCancelled) throw new Error('Cancelled');
+
+                    // Mount symlinks
+                    if (symlinks && symlinks.size > 0) {
+                        for (const [path, target] of symlinks) {
+                            const mountPath = archivePrefix && path.startsWith(archivePrefix)
+                                ? path.slice(archivePrefix.length) : path;
+                            mkdirp(FS, parentDir('/scan/' + mountPath));
+                            try { FS.symlink(target, '/scan/' + mountPath); } catch {}
+                        }
+                    }
+
+                    // Mount plugins and registry
+                    mkdirp(FS, '/plugins');
+                    for (const [fn, content] of Object.entries(plugins))
+                        FS.writeFile(`/plugins/${fn}`, content);
+                    mkdirp(FS, '/registry');
+                    FS.writeFile(`/registry/crypto-registry-${platform.registry}.yaml`, registryYaml);
+
+                    // Write cert metadata
+                    if (certData) {
+                        let adjusted = certData;
+                        if (archivePrefix) {
+                            adjusted = { ...certData,
+                                certs: (certData.certs || []).map(c =>
+                                    c.filePath && c.filePath.startsWith(archivePrefix)
+                                        ? { ...c, filePath: c.filePath.slice(archivePrefix.length) } : c),
+                                keys: (certData.keys || []).map(k =>
+                                    k.filePath && k.filePath.startsWith(archivePrefix)
+                                        ? { ...k, filePath: k.filePath.slice(archivePrefix.length) } : k),
+                            };
+                        }
+                        FS.writeFile('/scan/.cert-metadata.json', JSON.stringify(adjusted));
+                    }
+                    if (scanCancelled) throw new Error('Cancelled');
+
+                    // Run scan
+                    setScanProgress(70, 'Scanning cryptographic assets...');
+                    const argv = [
+                        '--cross-arch', '--rootfs-prefix', '/scan',
+                        '--discover-services',
+                        '--plugin-dir', '/plugins',
+                        '--crypto-registry', `/registry/crypto-registry-${platform.registry}.yaml`,
+                        '--format', 'cyclonedx', '--cyclonedx-spec', '1.7',
+                        '-o', '/output/cbom.json',
+                    ];
+                    if (certData) argv.push('--cert-metadata', '/scan/.cert-metadata.json');
+                    argv.push(...determineScanPaths(FS));
+
+                    let exitCode;
+                    try { exitCode = Module.callMain(argv); }
+                    catch (e) {
+                        if (typeof e === 'object' && typeof e.status === 'number') exitCode = e.status;
+                        else throw new Error(`WASM scan failed: ${e.message || e}`);
+                    }
+
+                    setScanProgress(95, 'Reading results...');
+                    let outputData;
+                    try { outputData = FS.readFile('/output/cbom.json', { encoding: 'utf8' }); }
+                    catch { throw new Error(`Scan produced no output (exit code: ${exitCode}).`); }
+
+                    const cbom = JSON.parse(outputData);
+                    const summaryData = extractCbomSummary(cbom);
+                    const scanTimeMs = Math.round(performance.now() - t0);
+
+                    scanResultCbom = cbom;
+
+                    // Show results
+                    setScanProgress(100, 'Complete');
+                    renderScanResults(summaryData, scanTimeMs);
+                    showScanState('results');
+
+                } catch (err) {
+                    if (scanCancelled || err.message === 'Cancelled') {
+                        showScanState('landing');
+                    } else {
+                        document.getElementById('scan-error-message').textContent = err.message;
+                        showScanState('error');
+                        console.error('Scan error:', err);
+                    }
+                }
+            }
+
+            function renderScanResults(summary, scanTimeMs) {
+                const pqcScore = summary.pqcReadiness.score;
+                const pqcClass = pqcScore >= 80 ? 'pqc-green' : pqcScore >= 50 ? 'pqc-yellow' : 'pqc-red';
+
+                document.getElementById('scan-summary-cards').innerHTML = `
+                    <div class="scan-summary-card" onclick="navigateToExplorer('all','all')">
+                        <div class="card-value">${summary.totalComponents}</div>
+                        <div class="card-label">Components</div>
+                    </div>
+                    <div class="scan-summary-card" onclick="navigateToExplorer('certificate','all')">
+                        <div class="card-value">${summary.certificates}</div>
+                        <div class="card-label">Certificates</div>
+                    </div>
+                    <div class="scan-summary-card" onclick="navigateToExplorer('algorithm','all')">
+                        <div class="card-value">${summary.algorithms}</div>
+                        <div class="card-label">Algorithms</div>
+                    </div>
+                    <div class="scan-summary-card" onclick="navigateToExplorer('library','all')">
+                        <div class="card-value">${summary.libraries}</div>
+                        <div class="card-label">Libraries</div>
+                    </div>
+                    <div class="scan-summary-card" onclick="navigateToExplorer('application','all')">
+                        <div class="card-value">${summary.applications}</div>
+                        <div class="card-label">Applications</div>
+                    </div>
+                    <div class="scan-summary-card ${pqcClass}" onclick="showTab('dashboard')">
+                        <div class="card-value">${pqcScore}%</div>
+                        <div class="card-label">PQC Readiness</div>
+                    </div>
+                `;
+            }
+
+            // Global functions for onclick handlers
+            window.cancelScan = function() {
+                scanCancelled = true;
+                showScanState('landing');
+            };
+
+            window.resetScanner = function() {
+                scanCancelled = false;
+                scanResultCbom = null;
+                showScanState('landing');
+            };
+
+            window.exploreResults = function() {
+                if (!scanResultCbom) return;
+                loadCbomData(scanResultCbom, { switchToDashboard: true, showAlert: false });
+            };
+
+            window.downloadScanCbom = function() {
+                if (!scanResultCbom) return;
+                const blob = new Blob([JSON.stringify(scanResultCbom, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'cbom.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+        })();
     </script>
 </body>
 </html>
